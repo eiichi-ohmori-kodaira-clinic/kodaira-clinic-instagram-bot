@@ -102,9 +102,8 @@ def clean_title_for_display(title: str, category: str) -> str:
     """画像のテンプレート背景に合わせてタイトル文字列を調整する"""
     display_title = title.strip()
     if category == "sugar":
-        # テンプレート自体に「糖のお話」が含まれているため、重複タイトルを除去
-        display_title = re.sub(r"^糖のお話\s*[\s　:-]*", "", display_title)
-        display_title = re.sub(r"^糖尿病\s*[\s　:-]*", "", display_title)
+        # 【糖のお話】や【お知らせ】などの角括弧付き・なしのカテゴリプレフィックスのみを除去
+        display_title = re.sub(r"^【?(糖のお話|お知らせ)】?\s*[\s　:-]*", "", display_title)
     return display_title
 
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
