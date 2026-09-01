@@ -102,7 +102,6 @@ def clean_title_for_display(title: str, category: str) -> str:
     """画像のテンプレート背景に合わせてタイトル文字列を調整する"""
     display_title = title.strip()
     if category == "sugar":
-        # 【糖のお話】や【お知らせ】などの角括弧付き・なしのカテゴリプレフィックスのみを除去
         display_title = re.sub(r"^【?(糖のお話|お知らせ)】?\s*[\s　:-]*", "", display_title)
     return display_title
 
@@ -128,7 +127,6 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
     line_height = font_size * 1.4
     total_text_height = len(lines) * line_height
 
-    # 下部領域（下から25%の位置）にテキストを配置
     start_y = int(img_height * 0.72) - (total_text_height / 2)
 
     for i, line in enumerate(lines):
@@ -229,17 +227,22 @@ def generate_caption_with_gemini(article: dict) -> str:
 5. 文末にハッシュタグ（#小平内科糖尿病クリニック #糖尿病 #健康 #小平市 など）を追加。
 """
 
-    try:
-        client = genai.Client(api_key=gemini_api_key)
-        response = client.models.generate_content(
-            model="gemini-3.7-flash",
-            contents=prompt
-        )
-        caption = response.text.strip()
-    except Exception as e:
-        log_debug(f"Gemini API generation failed: {e}")
-        caption = f"{category_label} {article['title']}\n\n{article['body']}\n\n#小平内科糖尿病クリニック"
+    models_to_try = ["gemini-3.7-flash", "gemini-flash-latest"]
+    for model_name in models_to_try:
+        try:
+            client = genai.Client(api_key=gemini_api_key)
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt
+            )
+            if response and response.text:
+                return ensure_disclaimer(response.text.strip())
+        except Exception as e:
+            log_debug(f"Gemini API generation with {model_name} failed: {e}")
+            time.sleep(2)
 
+    log_debug("Using fallback caption after Gemini models unavailable.")
+    caption = f"{category_label} {article['title']}\n\n{article['body']}\n\n#小平内科糖尿病クリニック"
     return ensure_disclaimer(caption)
 
 def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:

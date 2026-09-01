@@ -39,7 +39,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add post_news.jpg post_sugar.jpg pending_posts.json execution_log.txt 2>/dev/null || true
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: deploy generated post images [skip ci]" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: deploy generated post images [skip ci]" && git pull --rebase origin main && git push)
 
       - name: Step 3 - Publish to Instagram via Meta Graph API
         env:
@@ -54,4 +54,4 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add seen_hashes.json posted_urls.json execution_log.txt
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update state and execution logs [skip ci]" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update state and execution logs [skip ci]" && git pull --rebase origin main && git push)
