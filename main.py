@@ -23,9 +23,8 @@ ASSETS_DIR = Path("assets")
 NEWS_COLOR = (230, 81, 0)     # オレンジ (お知らせ)
 SUGAR_COLOR = (46, 125, 50)   # グリーン (糖のお話)
 
-# Instagram 標準画像サイズ (1080 x 1350 px, 4:5 縦長)
-CANVAS_WIDTH = 1080
-CANVAS_HEIGHT = 1350
+# Instagram 標準画像サイズ (1080 x 1080 px 正方形)
+CANVAS_SIZE = 1080
 
 def log_debug(message: str):
     timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -69,7 +68,7 @@ def save_posted_url(data: dict):
     with open(POST_URLS_FILE, "w", encoding="utf-8") as f:
         json.dump(urls, f, ensure_ascii=False, indent=2)
 
-def get_japanese_font(font_size: int = 60):
+def get_japanese_font(font_size: int = 58):
     """Linux(GitHub Actions)およびWindowsの日本語フォントを確実に読み込む"""
     font_candidates = [
         # 同梱・ローカルフォント
@@ -131,67 +130,83 @@ def find_template_file(base_name: str) -> Path:
             return p
     return None
 
+def prepare_square_template(template_path: Path, target_size: int = 1080) -> Image.Image:
+    """元画像を歪ませずに正方形1080x1080キャンバス全面へ完璧にフィットさせたテンプレート画像を返す"""
+    if template_path and template_path.exists():
+        raw_img = Image.open(template_path).convert("RGBA")
+        w, h = raw_img.size
+        
+        # 1080x1080 キャンバスを埋めるスケール計算
+        scale = max(target_size / w, target_size / h)
+        new_w = max(1, int(w * scale))
+        new_h = max(1, int(h * scale))
+        
+        resized = raw_img.resize((new_w, new_h), Image.Resampling.LANCZOS)
+        
+        square_canvas = Image.new("RGBA", (target_size, target_size), (255, 255, 255, 255))
+        paste_x = (target_size - new_w) // 2
+        paste_y = (target_size - new_h) // 2
+        square_canvas.paste(resized, (paste_x, paste_y), resized)
+        
+        base_img = square_canvas.convert("RGB")
+    else:
+        base_img = Image.new("RGB", (target_size, target_size), (255, 255, 255))
+    return base_img
+
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
-    """Instagram標準規格 1080x1350px (4:5 縦長) キャンバスで無加工テンプレートと文字を合成"""
+    """正方形1080x1080pxキャンバスで白縁取り付き太字タイトル画像を生成"""
     base_name = "sugar_template" if category == "sugar" else "news_template"
     template_path = find_template_file(base_name)
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
 
-    # 白背景 1080x1350px (4:5) キャンバス作成
-    canvas = Image.new("RGB", (CANVAS_WIDTH, CANVAS_HEIGHT), (255, 255, 255))
+    # 正方形1080x1080にフィットさせたテンプレート基盤画像
+    base_img = prepare_square_template(template_path, target_size=CANVAS_SIZE)
 
-    if template_path and template_path.exists():
-        raw_img = Image.open(template_path).convert("RGBA")
-        w, h = raw_img.size
+    img_width, img_height = base_img.size
+    draw = ImageDraw.Draw(base_img)
 
-        # 横幅 1080px に合わせたアスペクト比 100% 保持の非破壊リサイズ
-        scale = CANVAS_WIDTH / w
-        new_w = CANVAS_WIDTH
-        new_h = int(h * scale)
-        
-        resized = raw_img.resize((new_w, new_h), Image.Resampling.LANCZOS)
-        
-        # キャンバス上部 (Y: 40px) の位置にテンプレート画像を貼り付け
-        paste_y = 40
-        canvas.paste(resized, (0, paste_y), resized)
-        template_bottom_y = paste_y + new_h
-    else:
-        template_bottom_y = 800
-
-    draw = ImageDraw.Draw(canvas)
     display_title = clean_title_for_display(title, category)
-
-    # 日本語大文字フォント (サイズ: 62px)
-    font_size = 62
+    font_size = int(img_height * 0.054)  # 1080px上で約58pxの見やすいフォント
     font = get_japanese_font(font_size)
 
-    max_text_width = int(CANVAS_WIDTH * 0.82)
+    max_text_width = int(img_width * 0.82)
     lines = wrap_text(display_title, font, max_text_width)
     
     if len(lines) > 3:
-        font_size = 50
+        font_size = int(img_height * 0.044)
         font = get_japanese_font(font_size)
         lines = wrap_text(display_title, font, max_text_width)
 
-    line_height = font_size * 1.4
+    line_height = font_size * 1.35
     total_text_height = len(lines) * line_height
 
-    # イラスト画像直下の下部スペース (Y: template_bottom_y ~ 1350px) の中央に文字を配置
-    available_height = CANVAS_HEIGHT - template_bottom_y
-    target_center_y = template_bottom_y + (available_height / 2) - 20
+    # カテゴリに応じた下部エリアのテキスト中央位置計算
+    if category == "sugar":
+        target_center_y = int(img_height * 0.74)
+    else:
+        target_center_y = int(img_height * 0.78)
 
     start_y = target_center_y - (total_text_height / 2)
 
     for i, line in enumerate(lines):
         bbox = font.getbbox(line)
         w_text = bbox[2] - bbox[0]
-        x = (CANVAS_WIDTH - w_text) // 2
+        x = (img_width - w_text) // 2
         y = start_y + i * line_height
-        draw.text((x, y), line, font=font, fill=text_color)
-        log_debug(f"Drew line '{line}' at x={x}, y={y} with fill={text_color}")
+        
+        # 白い太縁取り付きでテキストを描画 (stroke_width=6, stroke_fill=白)
+        draw.text(
+            (x, y),
+            line,
+            font=font,
+            fill=text_color,
+            stroke_width=6,
+            stroke_fill=(255, 255, 255)
+        )
+        log_debug(f"Drew stroked line '{line}' at x={x}, y={y} with fill={text_color}")
 
-    canvas.save(output_path, "JPEG", quality=95)
-    log_debug(f"Created post image ({category}): {output_path} (final size: {canvas.size})")
+    base_img.save(output_path, "JPEG", quality=95)
+    log_debug(f"Created post image ({category}): {output_path} (final size: {base_img.size})")
     return output_path
 
 def scrape_kodaira_clinic():
