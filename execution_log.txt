@@ -800,3 +800,27 @@
 [2026-09-01 22:54:38] Gemini API generation with gemini-flash-latest failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
 [2026-09-01 22:54:40] Using fallback caption after Gemini models unavailable.
 [2026-09-01 22:54:40] Prepared 2 pending posts in pending_posts.json
+[2026-09-01 22:54:42] === MODE: PUBLISH ===
+[2026-09-01 22:54:42] Publishing 'news': '非常勤医師の診察日について'...
+[2026-09-01 22:54:42] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-09-01 22:54:42] Publishing image to Instagram via Meta Graph API...
+[2026-09-01 22:54:42] Target IG_USER_ID: 17841469684858061
+[2026-09-01 22:54:42] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
+[2026-09-01 22:54:47] Container API Response: {'id': '17947278744322829'}
+[2026-09-01 22:54:47] Media container created successfully. ID: 17947278744322829
+[2026-09-01 22:54:53] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947278744322829'})
+[2026-09-01 22:54:55] Publish API Response: {'id': '18139126393613104'}
+[2026-09-01 22:54:55] SUCCESS: Instagram post published! Post ID: 18139126393613104
+[2026-09-01 22:54:56] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DcwyD6Pj9UL/
+[2026-09-01 22:54:59] Publishing 'sugar': '糖尿病　旅行3'...
+[2026-09-01 22:54:59] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-09-01 22:54:59] Publishing image to Instagram via Meta Graph API...
+[2026-09-01 22:54:59] Target IG_USER_ID: 17841469684858061
+[2026-09-01 22:54:59] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
+[2026-09-01 22:55:02] Container API Response: {'id': '17947278777322829'}
+[2026-09-01 22:55:02] Media container created successfully. ID: 17947278777322829
+[2026-09-01 22:55:08] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947278777322829'})
+[2026-09-01 22:55:11] Publish API Response: {'id': '17874116562631659'}
+[2026-09-01 22:55:11] SUCCESS: Instagram post published! Post ID: 17874116562631659
+[2026-09-01 22:55:11] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DcwyF6pD5c0/
+[2026-09-01 22:55:14] Publish mode finished. Successfully published 2 posts.
