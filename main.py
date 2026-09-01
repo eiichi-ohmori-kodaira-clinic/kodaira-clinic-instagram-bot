@@ -14,6 +14,7 @@ from PIL import Image, ImageDraw, ImageFont
 SITE_URL = "https://kodaira.clinic/"
 DISCLAIMER_TEXT = "※本投稿は情報提供を目的としており、個別の診断・治療は医師にご相談ください。"
 SEEN_HASHES_FILE = Path("seen_hashes.json")
+POST_URLS_FILE = Path("posted_urls.json")
 ASSETS_DIR = Path("assets")
 
 NEWS_TEMPLATE_PATH = ASSETS_DIR / "news_template.png"
@@ -49,14 +50,24 @@ def save_seen_hashes(hashes: set):
     with open(SEEN_HASHES_FILE, "w", encoding="utf-8") as f:
         json.dump(list(sorted(hashes)), f, ensure_ascii=False, indent=2)
 
+def save_posted_url(data: dict):
+    urls = []
+    if POST_URLS_FILE.exists():
+        try:
+            with open(POST_URLS_FILE, "r", encoding="utf-8") as f:
+                urls = json.load(f)
+        except Exception:
+            urls = []
+    urls.append(data)
+    with open(POST_URLS_FILE, "w", encoding="utf-8") as f:
+        json.dump(urls, f, ensure_ascii=False, indent=2)
+
 # --- 日本語フォント取得 ---
 def get_japanese_font(font_size: int = 48):
     font_candidates = [
-        # Windows
         "C:\\Windows\\Fonts\\meiryo.ttc",
         "C:\\Windows\\Fonts\\msgothic.ttc",
         "C:\\Windows\\Fonts\\yuGothM.ttc",
-        # Linux (GitHub Actions)
         "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
         "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
@@ -234,13 +245,13 @@ def generate_caption_with_gemini(article: dict) -> str:
     return ensure_disclaimer(caption)
 
 # --- Instagram Graph API 投稿 ---
-def post_to_instagram(image_path: str, caption: str) -> bool:
+def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
     ig_user_id = os.environ.get("IG_USER_ID")
     meta_access_token = os.environ.get("META_ACCESS_TOKEN")
 
     if not ig_user_id or not meta_access_token:
         print("[Warning] IG_USER_ID or META_ACCESS_TOKEN is missing. Skipping API publish.")
-        return False
+        return {"success": False, "reason": "Missing Credentials"}
 
     repo_owner = "eiichi-ohmori-kodaira-clinic"
     repo_name = "kodaira-clinic-instagram-bot"
@@ -259,14 +270,15 @@ def post_to_instagram(image_path: str, caption: str) -> bool:
     try:
         res = requests.post(container_url, data=params, timeout=30)
         res_data = res.json()
+        print(f"[Debug] Container response: {res_data}")
         if "id" not in res_data:
             print(f"[Error] Failed to create media container: {res_data}")
-            return False
+            return {"success": False, "response": res_data}
         container_id = res_data["id"]
         print(f"[Info] Media container created: {container_id}")
     except Exception as e:
         print(f"[Error] Container API error: {e}")
-        return False
+        return {"success": False, "error": str(e)}
 
     # 2. ステータスポーリング
     status_url = f"https://graph.facebook.com/v20.0/{container_id}"
@@ -283,7 +295,7 @@ def post_to_instagram(image_path: str, caption: str) -> bool:
                 break
             elif status_code in ["ERROR", "EXPIRED"]:
                 print(f"[Error] Container processing failed with status: {status_code}")
-                return False
+                return {"success": False, "response": st_data}
         except Exception as e:
             print(f"[Warning] Polling request error: {e}")
 
@@ -296,15 +308,26 @@ def post_to_instagram(image_path: str, caption: str) -> bool:
     try:
         pub_res = requests.post(publish_url, data=pub_params, timeout=30)
         pub_data = pub_res.json()
+        print(f"[Debug] Publish response: {pub_data}")
         if "id" in pub_data:
-            print(f"[Success] Instagram post published! Post ID: {pub_data['id']}")
-            return True
+            media_id = pub_data["id"]
+            print(f"[Success] Instagram post published! Post ID: {media_id}")
+            
+            # パーマリンク取得
+            permalink_url = f"https://graph.facebook.com/v20.0/{media_id}"
+            p_res = requests.get(permalink_url, params={"fields": "permalink", "access_token": meta_access_token}, timeout=15)
+            p_data = p_res.json()
+            permalink = p_data.get("permalink", f"https://www.instagram.com/p/{media_id}/")
+            print(f"[Success] Instagram Post Direct URL (Permalink): {permalink}")
+            
+            save_posted_url({"title": title, "id": media_id, "permalink": permalink})
+            return {"success": True, "media_id": media_id, "permalink": permalink}
         else:
             print(f"[Error] Publish failed: {pub_data}")
-            return False
+            return {"success": False, "response": pub_data}
     except Exception as e:
         print(f"[Error] Publish API error: {e}")
-        return False
+        return {"success": False, "error": str(e)}
 
 def main():
     print("[Info] Starting Kodaira Clinic Instagram Auto-Post Bot...")
@@ -315,7 +338,6 @@ def main():
         print("[Info] No articles found on clinic website.")
         return
 
-    # 「お知らせ」と「糖のお話」からそれぞれ未投稿記事を1件ずつ取得
     target_news = None
     target_sugar = None
 
@@ -340,7 +362,6 @@ def main():
     for article in targets_to_post:
         print(f"\n[Info] Processing category '{article['category']}': '{article['title']}'")
 
-        # 1. 画像作成
         image_name = f"post_{article['category']}.jpg"
         image_path = create_post_image(
             title=article["title"],
@@ -348,19 +369,15 @@ def main():
             output_path=image_name
         )
 
-        # 2. キャプション生成 & ガードレール
         caption = generate_caption_with_gemini(article)
+        result = post_to_instagram(image_path, caption, title=article["title"])
 
-        # 3. Instagramへ投稿
-        success = post_to_instagram(image_path, caption)
-
-        # 処理履歴の記録
         seen_hashes.add(article["hash"])
         save_seen_hashes(seen_hashes)
         posted_count += 1
         time.sleep(3)
 
-    print(f"\n[Info] Bot execution finished. Successfully processed {posted_count} posts (News & Sugar).")
+    print(f"\n[Info] Bot execution finished. Processed {posted_count} posts.")
 
 if __name__ == "__main__":
     main()
