@@ -65,7 +65,7 @@ def save_posted_url(data: dict):
     with open(POST_URLS_FILE, "w", encoding="utf-8") as f:
         json.dump(urls, f, ensure_ascii=False, indent=2)
 
-def get_japanese_font(font_size: int = 52):
+def get_japanese_font(font_size: int = 60):
     font_candidates = [
         "C:\\Windows\\Fonts\\meiryo.ttc",
         "C:\\Windows\\Fonts\\msgothic.ttc",
@@ -114,37 +114,25 @@ def find_template_file(base_name: str) -> Path:
     return None
 
 def prepare_square_template(template_path: Path, target_size: int = 1080) -> Image.Image:
-    """余白（白または透明）を自動検出してクロップし、1080x1080の正方形キャンバスにフィットさせた画像を返す"""
+    """元画像のアスペクト比を一切歪めず、1080x1080の正方形キャンバスの中央にフィット合成したテンプレート画像を返す"""
     if template_path and template_path.exists():
-        raw_img = Image.open(template_path)
-        img_rgba = raw_img.convert("RGBA")
+        raw_img = Image.open(template_path).convert("RGBA")
+        w, h = raw_img.size
         
-        # 白背景・透明余白以外のコンテンツ領域を判定
-        r, g, b, a = img_rgba.split()
-        mask_r = r.point(lambda p: 255 if p < 240 else 0)
-        mask_g = g.point(lambda p: 255 if p < 240 else 0)
-        mask_b = b.point(lambda p: 255 if p < 240 else 0)
-        mask_a = a.point(lambda p: 255 if p > 0 else 0)
+        # 縦横比を完全に保持したまま target_size に収めるスケール計算
+        scale = min(target_size / w, target_size / h)
+        new_w = max(1, int(w * scale))
+        new_h = max(1, int(h * scale))
         
-        mask_color = ImageChops.add(ImageChops.add(mask_r, mask_g), mask_b)
-        final_mask = ImageChops.multiply(mask_color, mask_a)
-        
-        bbox = final_mask.getbbox()
-        if bbox:
-            cropped = img_rgba.crop(bbox)
-        else:
-            cropped = img_rgba
-        
-        w, h = cropped.size
-        size = max(w, h)
+        resized = raw_img.resize((new_w, new_h), Image.Resampling.LANCZOS)
         
         # 正方形キャンバスを作成して白背景でアルファ合成
-        square_canvas = Image.new("RGBA", (size, size), (255, 255, 255, 255))
-        paste_x = (size - w) // 2
-        paste_y = (size - h) // 2
-        square_canvas.paste(cropped, (paste_x, paste_y), cropped)
+        square_canvas = Image.new("RGBA", (target_size, target_size), (255, 255, 255, 255))
+        paste_x = (target_size - new_w) // 2
+        paste_y = (target_size - new_h) // 2
+        square_canvas.paste(resized, (paste_x, paste_y), resized)
         
-        base_img = square_canvas.resize((target_size, target_size), Image.Resampling.LANCZOS).convert("RGB")
+        base_img = square_canvas.convert("RGB")
     else:
         base_img = Image.new("RGB", (target_size, target_size), (255, 255, 255))
     return base_img
@@ -154,31 +142,32 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
     template_path = find_template_file(base_name)
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
 
-    # 正方形1080x1080にフィットさせたテンプレート基盤画像
+    # 正方形1080x1080にフィットさせた非破壊テンプレート基盤画像
     base_img = prepare_square_template(template_path, target_size=1080)
 
     img_width, img_height = base_img.size
     draw = ImageDraw.Draw(base_img)
 
     display_title = clean_title_for_display(title, category)
-    font_size = int(img_height * 0.052)  # 1080px上で約56pxの読みやすいフォント
+    font_size = int(img_height * 0.058)  # 1080px上で約62pxの明確で大きなフォント
     font = get_japanese_font(font_size)
 
-    max_text_width = int(img_width * 0.80)
+    max_text_width = int(img_width * 0.78)
     lines = wrap_text(display_title, font, max_text_width)
     
     if len(lines) > 3:
-        font_size = int(img_height * 0.042)
+        font_size = int(img_height * 0.046)
         font = get_japanese_font(font_size)
         lines = wrap_text(display_title, font, max_text_width)
 
     line_height = font_size * 1.35
     total_text_height = len(lines) * line_height
 
+    # イラストデザイン内の下部テキストスペース中央に確実に配置
     if category == "sugar":
-        target_center_y = int(img_height * 0.74)
+        target_center_y = int(img_height * 0.70)
     else:
-        target_center_y = int(img_height * 0.78)
+        target_center_y = int(img_height * 0.74)
 
     start_y = target_center_y - (total_text_height / 2)
 
