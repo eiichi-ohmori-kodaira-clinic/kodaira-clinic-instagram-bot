@@ -159,7 +159,7 @@ def prepare_square_template(template_path: Path, target_size: int = 1080) -> Ima
     return base_img
 
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
-    """「文字自体の太さ2倍」と「純白縁取り」を完全両立させた二層描画タイトル画像を生成"""
+    """お知らせ・糖のお話ともに完全同等の超極太二重ストロークでタイトル画像を生成"""
     base_name = "sugar_template" if category == "sugar" else "news_template"
     template_path = find_template_file(base_name)
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
@@ -201,27 +201,26 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
         x = (img_width - w_text) // 2
         y = start_y + i * line_height
         
-        # 【1層目（下地）】: 太い純白の縁取り (stroke_width=12, stroke_fill=純白)
+        # 【1層目（下地）】: 太い純白の縁取り (stroke_width=14, stroke_fill=純白)
         draw.text(
             (x, y),
             line,
             font=font,
             fill=(255, 255, 255),
-            stroke_width=12,
+            stroke_width=14,
             stroke_fill=(255, 255, 255)
         )
         
-        # 【2層目（上塗り）】: 文字と同色のストローク (stroke_width=5, stroke_fill=text_color) で文字自体の太さを2倍に超肉厚化！
-        # これにより「文字の太さ2倍（前回の重厚感）」と「純白のくっきり縁取り」が100%完全両立します！
+        # 【2層目（上塗り）】: お知らせ・糖のお話ともに文字同色ストローク(stroke_width=6)で完全に同等の超極太文字線に統一！
         draw.text(
             (x, y),
             line,
             font=font,
             fill=text_color,
-            stroke_width=5,
+            stroke_width=6,
             stroke_fill=text_color
         )
-        log_debug(f"Drew double-layered heavy white-stroked line '{line}' at x={x}, y={y} with fill={text_color}")
+        log_debug(f"Drew unified heavy stroked line '{line}' at x={x}, y={y} with fill={text_color}")
 
     base_img.save(output_path, "JPEG", quality=95)
     log_debug(f"Created post image ({category}): {output_path} (final size: {base_img.size})")
