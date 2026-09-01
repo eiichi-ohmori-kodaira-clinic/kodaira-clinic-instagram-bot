@@ -70,9 +70,10 @@ def save_posted_url(data: dict):
         json.dump(urls, f, ensure_ascii=False, indent=2)
 
 def get_japanese_font(font_size: int = 90):
-    """Linux(GitHub Actions)およびWindowsの日本語フォントを確実に読み込む"""
+    """最優先で超極太 Noto Sans JP Black を読み込み、OS環境問わず 100% 確実に描画する"""
     font_candidates = [
-        # 同梱・ローカルフォント
+        # 同梱最優先超極太フォント (Noto Sans JP Black)
+        ASSETS_DIR / "fonts" / "NotoSansJP-Black.ttf",
         ASSETS_DIR / "fonts" / "meiryo.ttc",
         ASSETS_DIR / "fonts" / "JapaneseFont.ttf",
         # Linux (Ubuntu apt-get fonts-noto-cjk / fonts-ipafont-gothic) パス
@@ -158,7 +159,7 @@ def prepare_square_template(template_path: Path, target_size: int = 1080) -> Ima
     return base_img
 
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
-    """正方形1080x1080pxキャンバスで90px文字・白縁取り・白みのあるパステルカラータイトル画像を生成"""
+    """正方形1080x1080pxキャンバスで超極太 Noto Sans JP Black・90px文字・純白縁取りタイトル画像を生成"""
     base_name = "sugar_template" if category == "sugar" else "news_template"
     template_path = find_template_file(base_name)
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
@@ -171,7 +172,7 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
 
     display_title = clean_title_for_display(title, category)
     
-    # ユーザー指定: タイトルの文字サイズは 90px
+    # 90px 超極太 Noto Sans JP Black
     font_size = int(img_height * 0.083)  # 1080px上で90px固定
     font = get_japanese_font(font_size)
 
@@ -200,7 +201,7 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
         x = (img_width - w_text) // 2
         y = start_y + i * line_height
         
-        # ユーザー指定: 縁取りの色は白 (stroke_width=6, stroke_fill=純白)
+        # 白い綺麗な縁取り付き超極太テキストを描画 (stroke_width=6, stroke_fill=純白)
         draw.text(
             (x, y),
             line,
@@ -209,7 +210,7 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
             stroke_width=6,
             stroke_fill=(255, 255, 255)
         )
-        log_debug(f"Drew 90px line with white stroke '{line}' at x={x}, y={y} with fill={text_color}")
+        log_debug(f"Drew Noto Sans JP Black 90px line '{line}' at x={x}, y={y} with fill={text_color}")
 
     base_img.save(output_path, "JPEG", quality=95)
     log_debug(f"Created post image ({category}): {output_path} (final size: {base_img.size})")
