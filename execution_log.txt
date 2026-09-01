@@ -50,3 +50,35 @@
 [2026-09-01 09:31:25] ERROR: Failed to create media container. Meta API Response: {'error': {'message': "Unsupported post request. Object with ID '1275271822340651' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'A0rHeXxbQeM2UojbPEnAMJp'}}
 [2026-09-01 09:31:25] Publish failed for '糖尿病　酷暑の過ごし方': {'success': False, 'response': {'error': {'message': "Unsupported post request. Object with ID '1275271822340651' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'A0rHeXxbQeM2UojbPEnAMJp'}}}
 [2026-09-01 09:31:25] Publish mode finished. Successfully published 0 posts.
+[2026-09-01 09:35:54] === MODE: PREPARE ===
+[2026-09-01 09:35:54] Scraping https://kodaira.clinic/...
+[2026-09-01 09:35:55] Found 50 articles.
+[2026-09-01 09:35:55] Created post image (news): post_news.jpg
+[2026-09-01 09:36:04] Gemini API generation failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-01 09:36:04] Created post image (sugar): post_sugar.jpg
+[2026-09-01 09:36:06] Gemini API generation failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-01 09:36:06] Prepared 2 pending posts in pending_posts.json
+[2026-09-01 09:36:08] === MODE: PUBLISH ===
+[2026-09-01 09:36:08] Publishing 'news': '休診日のお知らせ'...
+[2026-09-01 09:36:08] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-09-01 09:36:08] Publishing image to Instagram via Meta Graph API...
+[2026-09-01 09:36:08] Target IG_USER_ID: 17841469684858061
+[2026-09-01 09:36:08] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
+[2026-09-01 09:36:13] Container API Response: {'id': '17947169817322829'}
+[2026-09-01 09:36:13] Media container created successfully. ID: 17947169817322829
+[2026-09-01 09:36:18] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947169817322829'})
+[2026-09-01 09:36:22] Publish API Response: {'id': '18141191821590103'}
+[2026-09-01 09:36:22] SUCCESS: Instagram post published! Post ID: 18141191821590103
+[2026-09-01 09:36:23] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DcvWrGbDc2R/
+[2026-09-01 09:36:26] Publishing 'sugar': '糖尿病　酷暑の過ごし方'...
+[2026-09-01 09:36:26] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-09-01 09:36:26] Publishing image to Instagram via Meta Graph API...
+[2026-09-01 09:36:26] Target IG_USER_ID: 17841469684858061
+[2026-09-01 09:36:26] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
+[2026-09-01 09:36:31] Container API Response: {'id': '17947169850322829'}
+[2026-09-01 09:36:31] Media container created successfully. ID: 17947169850322829
+[2026-09-01 09:36:37] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947169850322829'})
+[2026-09-01 09:36:40] Publish API Response: {'id': '17904406185551167'}
+[2026-09-01 09:36:40] SUCCESS: Instagram post published! Post ID: 17904406185551167
+[2026-09-01 09:36:41] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DcvWtNejp6V/
+[2026-09-01 09:36:44] Publish mode finished. Successfully published 2 posts.
