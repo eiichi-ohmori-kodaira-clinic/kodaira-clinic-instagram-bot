@@ -113,12 +113,9 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
 
     if template_path.exists():
-        raw_img = Image.open(template_path)
-        if raw_img.mode in ("RGBA", "LA") or (raw_img.mode == "P" and "transparency" in raw_img.info):
-            base_img = Image.new("RGB", raw_img.size, (255, 255, 255))
-            base_img.paste(raw_img, mask=raw_img.split()[-1] if raw_img.mode == "RGBA" else None)
-        else:
-            base_img = raw_img.convert("RGB")
+        raw_img = Image.open(template_path).convert("RGBA")
+        base_img = Image.new("RGB", raw_img.size, (255, 255, 255))
+        base_img.paste(raw_img, (0, 0), raw_img)
     else:
         base_img = Image.new("RGB", (1080, 1080), (255, 255, 255))
 
@@ -131,6 +128,13 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
 
     max_text_width = int(img_width * 0.82)
     lines = wrap_text(display_title, font, max_text_width)
+    
+    # 3行を超える長文タイトルの場合、フォントサイズを動的に調整
+    if len(lines) > 3:
+        font_size = int(img_height * 0.045)
+        font = get_japanese_font(font_size)
+        lines = wrap_text(display_title, font, max_text_width)
+
     line_height = font_size * 1.35
     total_text_height = len(lines) * line_height
 
