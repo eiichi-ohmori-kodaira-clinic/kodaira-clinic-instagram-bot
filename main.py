@@ -75,7 +75,6 @@ def wrap_text(text: str, font: ImageFont.FreeTypeFont, max_width: int) -> list:
     current_line = ""
     for char in text:
         test_line = current_line + char
-        # Pillow の getbbox で幅を計算
         bbox = font.getbbox(test_line)
         width = bbox[2] - bbox[0]
         if width <= max_width:
@@ -91,7 +90,6 @@ def wrap_text(text: str, font: ImageFont.FreeTypeFont, max_width: int) -> list:
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
     img_width, img_height = 1080, 1350
     
-    # カテゴリに応じたテンプレートと文字色の選定
     if category == "sugar":
         template_path = SUGAR_TEMPLATE_PATH
         text_color = SUGAR_COLOR
@@ -111,14 +109,11 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
     font_size = 52
     font = get_japanese_font(font_size)
 
-    # タイトル描画領域（中央の描画可能領域）
     max_text_width = 850
     lines = wrap_text(title, font, max_text_width)
     
     line_height = font_size * 1.5
     total_text_height = len(lines) * line_height
-
-    # 描画Y座標の設定（中央やや下あたり）
     start_y = (img_height - total_text_height) // 2 + 80
 
     for i, line in enumerate(lines):
@@ -149,23 +144,18 @@ def scrape_kodaira_clinic():
     soup = BeautifulSoup(res.text, "html.parser")
     articles = []
 
-    # div.wrapper_news 内の dl リストを探索
     news_wrapper = soup.find("div", class_="wrapper_news")
     if not news_wrapper:
-        print("[Warning] div.wrapper_news not found, falling back to body search.")
         news_wrapper = soup
 
-    # お知らせおよび糖のお話のリストアイテムを取得
     dls = news_wrapper.find_all("dl", class_=re.compile(r"list_news"))
     for dl in dls:
         dts = dl.find_all("dt")
         dds = dl.find_all("dd")
         
         for dt, dd in zip(dts, dds):
-            # クラス判定
             dt_classes = dt.get("class", [])
             cat_str = " ".join(dt_classes)
-            
             category = "sugar" if "cat002" in cat_str or "sugar" in dl.get("class", []) else "news"
             
             date_div = dt.find("div", class_="date")
@@ -174,7 +164,6 @@ def scrape_kodaira_clinic():
             date_text = date_div.get_text(strip=True) if date_div else ""
             title_text = title_div.get_text(strip=True) if title_div else ""
             
-            # brタグを改行に変換して本文取得
             for br in dd.find_all("br"):
                 br.replace_with("\n")
             body_text = dd.get_text(strip=True)
@@ -182,7 +171,6 @@ def scrape_kodaira_clinic():
             if not title_text:
                 continue
 
-            # 一意キーの作成
             key = f"{date_text}_{category}_{title_text}"
             article_hash = calculate_hash(key)
 
@@ -194,7 +182,6 @@ def scrape_kodaira_clinic():
                 "body": body_text
             })
 
-    # 重複排除（同じハッシュのものを除く）
     unique_articles = []
     seen = set()
     for item in articles:
@@ -208,12 +195,13 @@ def scrape_kodaira_clinic():
 # --- Geminiキャプション生成 ---
 def generate_caption_with_gemini(article: dict) -> str:
     gemini_api_key = os.environ.get("GEMINI_API_KEY")
+    category_label = "【糖のお話】" if article["category"] == "sugar" else "【お知らせ】"
+
     if not gemini_api_key:
         print("[Warning] GEMINI_API_KEY is missing. Using fallback caption.")
-        caption = f"【{article['title']}】\n\n{article['body']}\n\n#小平内科糖尿病クリニック #内科 #糖尿病"
+        caption = f"{category_label} {article['title']}\n\n{article['body']}\n\n#小平内科糖尿病クリニック #内科 #糖尿病"
         return ensure_disclaimer(caption)
 
-    category_label = "【糖のお話】" if article["category"] == "sugar" else "【お知らせ】"
     prompt = f"""
 あなたは「小平内科糖尿病クリニック」のInstagram広報担当です。
 以下のWebサイトの新着記事を元に、Instagram向けの親しみやすく読みやすい投稿文（キャプション）を作成してください。
@@ -254,7 +242,6 @@ def post_to_instagram(image_path: str, caption: str) -> bool:
         print("[Warning] IG_USER_ID or META_ACCESS_TOKEN is missing. Skipping API publish.")
         return False
 
-    # ※本番環境では GitHub Raw URL またはホスティング公開URLを指定
     repo_owner = "eiichi-ohmori-kodaira-clinic"
     repo_name = "kodaira-clinic-instagram-bot"
     image_raw_url = f"https://raw.githubusercontent.com/{repo_owner}/{repo_name}/main/{image_path}"
@@ -328,35 +315,52 @@ def main():
         print("[Info] No articles found on clinic website.")
         return
 
-    new_posts_count = 0
+    # 「お知らせ」と「糖のお話」からそれぞれ未投稿記事を1件ずつ取得
+    target_news = None
+    target_sugar = None
+
     for article in articles:
         if article["hash"] in seen_hashes:
-            print(f"[Info] Article already posted: '{article['title']}'")
             continue
+        if article["category"] == "news" and not target_news:
+            target_news = article
+        elif article["category"] == "sugar" and not target_sugar:
+            target_sugar = article
+        
+        if target_news and target_sugar:
+            break
 
-        print(f"[Info] New article detected! Category: {article['category']}, Title: '{article['title']}'")
+    targets_to_post = [a for a in [target_news, target_sugar] if a is not None]
 
-        # 1. 投稿画像の生成（テンプレート背景＋カテゴリ別フォント色タイトル）
+    if not targets_to_post:
+        print("[Info] No new unposted articles found for either category.")
+        return
+
+    posted_count = 0
+    for article in targets_to_post:
+        print(f"\n[Info] Processing category '{article['category']}': '{article['title']}'")
+
+        # 1. 画像作成
+        image_name = f"post_{article['category']}.jpg"
         image_path = create_post_image(
             title=article["title"],
             category=article["category"],
-            output_path="post_image.jpg"
+            output_path=image_name
         )
 
-        # 2. Geminiでのキャプション生成 & ハードガードレール（免責事項強制追加）
+        # 2. キャプション生成 & ガードレール
         caption = generate_caption_with_gemini(article)
 
         # 3. Instagramへ投稿
         success = post_to_instagram(image_path, caption)
-        
-        # テスト・初回実行時はハッシュを記録
+
+        # 処理履歴の記録
         seen_hashes.add(article["hash"])
         save_seen_hashes(seen_hashes)
-        new_posts_count += 1
-        print(f"[Info] Processed article: '{article['title']}'")
-        break  # 1回の実行で1件ずつ安全に投稿
+        posted_count += 1
+        time.sleep(3)
 
-    print(f"[Info] Bot execution finished. Processed {new_posts_count} new posts.")
+    print(f"\n[Info] Bot execution finished. Successfully processed {posted_count} posts (News & Sugar).")
 
 if __name__ == "__main__":
     main()
