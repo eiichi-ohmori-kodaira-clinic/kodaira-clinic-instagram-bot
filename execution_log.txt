@@ -90,3 +90,15 @@
 [2026-09-01 09:43:44] Created post image (sugar): post_sugar.jpg
 [2026-09-01 09:44:09] Gemini API generation failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
 [2026-09-01 09:44:09] Prepared 2 pending posts in pending_posts.json
+[2026-09-01 09:49:41] === MODE: PREPARE ===
+[2026-09-01 09:49:41] Scraping https://kodaira.clinic/...
+[2026-09-01 09:49:43] Found 50 articles.
+[2026-09-01 09:49:43] Created post image (news): post_news.jpg
+[2026-09-01 09:49:47] Gemini API generation with gemini-3.7-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-01 09:49:50] Gemini API generation with gemini-flash-latest failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-01 09:49:52] Using fallback caption after Gemini models unavailable.
+[2026-09-01 09:49:52] Created post image (sugar): post_sugar.jpg
+[2026-09-01 09:49:53] Gemini API generation with gemini-3.7-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-01 09:49:56] Gemini API generation with gemini-flash-latest failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-01 09:49:58] Using fallback caption after Gemini models unavailable.
+[2026-09-01 09:49:58] Prepared 2 pending posts in pending_posts.json
