@@ -426,3 +426,43 @@
 [2026-09-01 10:48:09] SUCCESS: Instagram post published! Post ID: 18124885171878186
 [2026-09-01 10:48:09] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dcve43yIPh1/
 [2026-09-01 10:48:12] Publish mode finished. Successfully published 2 posts.
+[2026-09-01 11:06:22] === MODE: PREPARE ===
+[2026-09-01 11:06:22] Scraping https://kodaira.clinic/...
+[2026-09-01 11:06:24] Found 50 articles.
+[2026-09-01 11:06:24] Loaded font successfully: assets/fonts/meiryo.ttc (size: 91)
+[2026-09-01 11:06:24] Drew super bold stroked line '休診日のお知らせ' at x=176, y=782.85 with fill=(255, 102, 0)
+[2026-09-01 11:06:24] Created post image (news): post_news.jpg (final size: (1080, 1080))
+[2026-09-01 11:06:25] Gemini API generation with gemini-3.7-flash failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.7-flash\nPlease retry in 34.751548628s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-3.7-flash', 'location': 'global'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '34s'}]}}
+[2026-09-01 11:06:27] Gemini API generation with gemini-flash-latest failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.7-flash\nPlease retry in 32.567497312s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.7-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '32s'}]}}
+[2026-09-01 11:06:29] Using fallback caption after Gemini models unavailable.
+[2026-09-01 11:06:29] Loaded font successfully: assets/fonts/meiryo.ttc (size: 91)
+[2026-09-01 11:06:29] Drew super bold stroked line '酷暑の過ごし方' at x=221, y=739.85 with fill=(40, 180, 70)
+[2026-09-01 11:06:29] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
+[2026-09-01 11:06:30] Gemini API generation with gemini-3.7-flash failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.7-flash\nPlease retry in 29.889626246s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-3.7-flash', 'location': 'global'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '29s'}]}}
+[2026-09-01 11:06:32] Gemini API generation with gemini-flash-latest failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.7-flash\nPlease retry in 27.666821122s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-3.7-flash', 'location': 'global'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '27s'}]}}
+[2026-09-01 11:06:34] Using fallback caption after Gemini models unavailable.
+[2026-09-01 11:06:34] Prepared 2 pending posts in pending_posts.json
+[2026-09-01 11:06:36] === MODE: PUBLISH ===
+[2026-09-01 11:06:36] Publishing 'news': '休診日のお知らせ'...
+[2026-09-01 11:06:36] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-09-01 11:06:36] Publishing image to Instagram via Meta Graph API...
+[2026-09-01 11:06:36] Target IG_USER_ID: 17841469684858061
+[2026-09-01 11:06:36] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
+[2026-09-01 11:06:42] Container API Response: {'id': '17947200072322829'}
+[2026-09-01 11:06:42] Media container created successfully. ID: 17947200072322829
+[2026-09-01 11:06:48] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947200072322829'})
+[2026-09-01 11:06:51] Publish API Response: {'id': '18097456076562308'}
+[2026-09-01 11:06:51] SUCCESS: Instagram post published! Post ID: 18097456076562308
+[2026-09-01 11:06:52] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DcvhBuxjtS2/
+[2026-09-01 11:06:55] Publishing 'sugar': '糖尿病　酷暑の過ごし方'...
+[2026-09-01 11:06:55] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-09-01 11:06:55] Publishing image to Instagram via Meta Graph API...
+[2026-09-01 11:06:55] Target IG_USER_ID: 17841469684858061
+[2026-09-01 11:06:55] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
+[2026-09-01 11:06:59] Container API Response: {'id': '17947200141322829'}
+[2026-09-01 11:06:59] Media container created successfully. ID: 17947200141322829
+[2026-09-01 11:07:05] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947200141322829'})
+[2026-09-01 11:07:09] Publish API Response: {'id': '18175425502437098'}
+[2026-09-01 11:07:09] SUCCESS: Instagram post published! Post ID: 18175425502437098
+[2026-09-01 11:07:10] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DcvhD8sj4FC/
+[2026-09-01 11:07:13] Publish mode finished. Successfully published 2 posts.
