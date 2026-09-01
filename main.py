@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -10,8 +11,17 @@ from google import genai
 from PIL import Image, ImageDraw, ImageFont
 
 # --- 定数および設定 ---
+SITE_URL = "https://kodaira.clinic/"
 DISCLAIMER_TEXT = "※本投稿は情報提供を目的としており、個別の診断・治療は医師にご相談ください。"
 SEEN_HASHES_FILE = Path("seen_hashes.json")
+ASSETS_DIR = Path("assets")
+
+NEWS_TEMPLATE_PATH = ASSETS_DIR / "news_template.png"
+SUGAR_TEMPLATE_PATH = ASSETS_DIR / "sugar_template.png"
+
+# フォント色設定
+NEWS_COLOR = (230, 81, 0)     # オレンジ (お知らせ)
+SUGAR_COLOR = (46, 125, 50)   # グリーン (糖のお話)
 
 # --- 免責事項ハードガードレール ---
 def ensure_disclaimer(caption: str) -> str:
@@ -21,8 +31,8 @@ def ensure_disclaimer(caption: str) -> str:
     return caption
 
 # --- ハッシュ値計算 ---
-def calculate_hash(content: str) -> str:
-    return hashlib.sha256(content.encode("utf-8")).hexdigest()
+def calculate_hash(key_string: str) -> str:
+    return hashlib.sha256(key_string.encode("utf-8")).hexdigest()
 
 # --- 状態管理 ---
 def load_seen_hashes() -> set:
@@ -37,44 +47,316 @@ def load_seen_hashes() -> set:
 
 def save_seen_hashes(hashes: set):
     with open(SEEN_HASHES_FILE, "w", encoding="utf-8") as f:
-        json.dump(list(hashes), f, ensure_ascii=False, indent=2)
+        json.dump(list(sorted(hashes)), f, ensure_ascii=False, indent=2)
 
-# --- 投稿画像生成 (1080x1350px JPEG RGB) ---
-def create_post_image(title: str, output_path: str = "post_image.jpg"):
+# --- 日本語フォント取得 ---
+def get_japanese_font(font_size: int = 48):
+    font_candidates = [
+        # Windows
+        "C:\\Windows\\Fonts\\meiryo.ttc",
+        "C:\\Windows\\Fonts\\msgothic.ttc",
+        "C:\\Windows\\Fonts\\yuGothM.ttc",
+        # Linux (GitHub Actions)
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    ]
+    for font_path in font_candidates:
+        if os.path.exists(font_path):
+            try:
+                return ImageFont.truetype(font_path, font_size)
+            except Exception:
+                continue
+    return ImageFont.load_default()
+
+# --- テキストの自動折返し計算 ---
+def wrap_text(text: str, font: ImageFont.FreeTypeFont, max_width: int) -> list:
+    lines = []
+    current_line = ""
+    for char in text:
+        test_line = current_line + char
+        # Pillow の getbbox で幅を計算
+        bbox = font.getbbox(test_line)
+        width = bbox[2] - bbox[0]
+        if width <= max_width:
+            current_line = test_line
+        else:
+            lines.append(current_line)
+            current_line = char
+    if current_line:
+        lines.append(current_line)
+    return lines
+
+# --- 投稿画像生成 ---
+def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
     img_width, img_height = 1080, 1350
-    # 背景色 (アースカラー・洗練されたトーン)
-    bg_color = (245, 247, 248)
-    image = Image.new("RGB", (img_width, img_height), bg_color)
-    draw = ImageDraw.Draw(image)
-
-    # シンプルな枠線とタイトルのプレースホルダー描画
-    border_margin = 40
-    draw.rectangle(
-        [(border_margin, border_margin), (img_width - border_margin, img_height - border_margin)],
-        outline=(180, 200, 190),
-        width=4
-    )
-
-    # 保存
-    image.save(output_path, "JPEG", quality=95)
-    print(f"[Info] Created post image: {output_path}")
-
-def main():
-    print("[Info] Starting Kodaira Clinic Instagram Auto-Post Bot...")
     
-    # 環境変数のチェック
+    # カテゴリに応じたテンプレートと文字色の選定
+    if category == "sugar":
+        template_path = SUGAR_TEMPLATE_PATH
+        text_color = SUGAR_COLOR
+    else:
+        template_path = NEWS_TEMPLATE_PATH
+        text_color = NEWS_COLOR
+
+    if template_path.exists():
+        base_img = Image.open(template_path).convert("RGB")
+        if base_img.size != (img_width, img_height):
+            base_img = base_img.resize((img_width, img_height), Image.Resampling.LANCZOS)
+    else:
+        print(f"[Warning] Template {template_path} not found. Creating fallback background.")
+        base_img = Image.new("RGB", (img_width, img_height), (245, 247, 248))
+
+    draw = ImageDraw.Draw(base_img)
+    font_size = 52
+    font = get_japanese_font(font_size)
+
+    # タイトル描画領域（中央の描画可能領域）
+    max_text_width = 850
+    lines = wrap_text(title, font, max_text_width)
+    
+    line_height = font_size * 1.5
+    total_text_height = len(lines) * line_height
+
+    # 描画Y座標の設定（中央やや下あたり）
+    start_y = (img_height - total_text_height) // 2 + 80
+
+    for i, line in enumerate(lines):
+        bbox = font.getbbox(line)
+        w = bbox[2] - bbox[0]
+        x = (img_width - w) // 2
+        y = start_y + i * line_height
+        draw.text((x, y), line, font=font, fill=text_color)
+
+    base_img.save(output_path, "JPEG", quality=95)
+    print(f"[Info] Created post image ({category}): {output_path}")
+    return output_path
+
+# --- HPスクレイピング ---
+def scrape_kodaira_clinic():
+    print(f"[Info] Scraping {SITE_URL}...")
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+    try:
+        res = requests.get(SITE_URL, headers=headers, timeout=(5, 30))
+        res.raise_for_status()
+        res.encoding = res.apparent_encoding or "utf-8"
+    except Exception as e:
+        print(f"[Error] Failed to fetch {SITE_URL}: {e}")
+        return []
+
+    soup = BeautifulSoup(res.text, "html.parser")
+    articles = []
+
+    # div.wrapper_news 内の dl リストを探索
+    news_wrapper = soup.find("div", class_="wrapper_news")
+    if not news_wrapper:
+        print("[Warning] div.wrapper_news not found, falling back to body search.")
+        news_wrapper = soup
+
+    # お知らせおよび糖のお話のリストアイテムを取得
+    dls = news_wrapper.find_all("dl", class_=re.compile(r"list_news"))
+    for dl in dls:
+        dts = dl.find_all("dt")
+        dds = dl.find_all("dd")
+        
+        for dt, dd in zip(dts, dds):
+            # クラス判定
+            dt_classes = dt.get("class", [])
+            cat_str = " ".join(dt_classes)
+            
+            category = "sugar" if "cat002" in cat_str or "sugar" in dl.get("class", []) else "news"
+            
+            date_div = dt.find("div", class_="date")
+            title_div = dt.find("div", class_="tit")
+
+            date_text = date_div.get_text(strip=True) if date_div else ""
+            title_text = title_div.get_text(strip=True) if title_div else ""
+            
+            # brタグを改行に変換して本文取得
+            for br in dd.find_all("br"):
+                br.replace_with("\n")
+            body_text = dd.get_text(strip=True)
+
+            if not title_text:
+                continue
+
+            # 一意キーの作成
+            key = f"{date_text}_{category}_{title_text}"
+            article_hash = calculate_hash(key)
+
+            articles.append({
+                "hash": article_hash,
+                "category": category,
+                "date": date_text,
+                "title": title_text,
+                "body": body_text
+            })
+
+    # 重複排除（同じハッシュのものを除く）
+    unique_articles = []
+    seen = set()
+    for item in articles:
+        if item["hash"] not in seen:
+            seen.add(item["hash"])
+            unique_articles.append(item)
+
+    print(f"[Info] Found {len(unique_articles)} articles.")
+    return unique_articles
+
+# --- Geminiキャプション生成 ---
+def generate_caption_with_gemini(article: dict) -> str:
     gemini_api_key = os.environ.get("GEMINI_API_KEY")
+    if not gemini_api_key:
+        print("[Warning] GEMINI_API_KEY is missing. Using fallback caption.")
+        caption = f"【{article['title']}】\n\n{article['body']}\n\n#小平内科糖尿病クリニック #内科 #糖尿病"
+        return ensure_disclaimer(caption)
+
+    category_label = "【糖のお話】" if article["category"] == "sugar" else "【お知らせ】"
+    prompt = f"""
+あなたは「小平内科糖尿病クリニック」のInstagram広報担当です。
+以下のWebサイトの新着記事を元に、Instagram向けの親しみやすく読みやすい投稿文（キャプション）を作成してください。
+
+タイトル: {article['title']}
+日付: {article['date']}
+カテゴリ: {category_label}
+本文:
+{article['body']}
+
+■ 投稿作成ルール:
+1. 冒頭に {category_label} およびタイトルを記載。
+2. 専門用語をわかりやすく解説し、患者様や一般の方が親しみやすい丁寧な敬語（〜です、〜ます）を使用。
+3. 医療広告ガイドラインを遵守し、断定的な治療効果の保証や過剰な宣伝表現は避ける。
+4. 適切な絵文字や改行を入れて読みやすく装飾する。
+5. 文末にハッシュタグ（#小平内科糖尿病クリニック #糖尿病 #健康 #小平市 など）を追加。
+"""
+
+    try:
+        client = genai.Client(api_key=gemini_api_key)
+        response = client.models.generate_content(
+            model="gemini-3.7-flash",
+            contents=prompt
+        )
+        caption = response.text.strip()
+    except Exception as e:
+        print(f"[Error] Gemini API generation failed: {e}")
+        caption = f"{category_label} {article['title']}\n\n{article['body']}\n\n#小平内科糖尿病クリニック"
+
+    return ensure_disclaimer(caption)
+
+# --- Instagram Graph API 投稿 ---
+def post_to_instagram(image_path: str, caption: str) -> bool:
     ig_user_id = os.environ.get("IG_USER_ID")
     meta_access_token = os.environ.get("META_ACCESS_TOKEN")
 
-    if not gemini_api_key:
-        print("[Warning] GEMINI_API_KEY environment variable is not set.")
+    if not ig_user_id or not meta_access_token:
+        print("[Warning] IG_USER_ID or META_ACCESS_TOKEN is missing. Skipping API publish.")
+        return False
 
+    # ※本番環境では GitHub Raw URL またはホスティング公開URLを指定
+    repo_owner = "eiichi-ohmori-kodaira-clinic"
+    repo_name = "kodaira-clinic-instagram-bot"
+    image_raw_url = f"https://raw.githubusercontent.com/{repo_owner}/{repo_name}/main/{image_path}"
+
+    print(f"[Info] Publishing image to Instagram via Meta Graph API...")
+    print(f"[Info] Image URL: {image_raw_url}")
+
+    # 1. コンテナ作成
+    container_url = f"https://graph.facebook.com/v20.0/{ig_user_id}/media"
+    params = {
+        "image_url": image_raw_url,
+        "caption": caption,
+        "access_token": meta_access_token
+    }
+    try:
+        res = requests.post(container_url, data=params, timeout=30)
+        res_data = res.json()
+        if "id" not in res_data:
+            print(f"[Error] Failed to create media container: {res_data}")
+            return False
+        container_id = res_data["id"]
+        print(f"[Info] Media container created: {container_id}")
+    except Exception as e:
+        print(f"[Error] Container API error: {e}")
+        return False
+
+    # 2. ステータスポーリング
+    status_url = f"https://graph.facebook.com/v20.0/{container_id}"
+    status_params = {"fields": "status_code", "access_token": meta_access_token}
+    
+    for attempt in range(10):
+        time.sleep(5)
+        try:
+            st_res = requests.get(status_url, params=status_params, timeout=15)
+            st_data = st_res.json()
+            status_code = st_data.get("status_code")
+            print(f"[Info] Polling status ({attempt + 1}/10): {status_code}")
+            if status_code == "FINISHED":
+                break
+            elif status_code in ["ERROR", "EXPIRED"]:
+                print(f"[Error] Container processing failed with status: {status_code}")
+                return False
+        except Exception as e:
+            print(f"[Warning] Polling request error: {e}")
+
+    # 3. メディア公開
+    publish_url = f"https://graph.facebook.com/v20.0/{ig_user_id}/media_publish"
+    pub_params = {
+        "creation_id": container_id,
+        "access_token": meta_access_token
+    }
+    try:
+        pub_res = requests.post(publish_url, data=pub_params, timeout=30)
+        pub_data = pub_res.json()
+        if "id" in pub_data:
+            print(f"[Success] Instagram post published! Post ID: {pub_data['id']}")
+            return True
+        else:
+            print(f"[Error] Publish failed: {pub_data}")
+            return False
+    except Exception as e:
+        print(f"[Error] Publish API error: {e}")
+        return False
+
+def main():
+    print("[Info] Starting Kodaira Clinic Instagram Auto-Post Bot...")
     seen_hashes = load_seen_hashes()
-    print(f"[Info] Loaded {len(seen_hashes)} seen hashes.")
+    articles = scrape_kodaira_clinic()
 
-    # 処理完了ログ
-    print("[Info] Bot execution completed successfully.")
+    if not articles:
+        print("[Info] No articles found on clinic website.")
+        return
+
+    new_posts_count = 0
+    for article in articles:
+        if article["hash"] in seen_hashes:
+            print(f"[Info] Article already posted: '{article['title']}'")
+            continue
+
+        print(f"[Info] New article detected! Category: {article['category']}, Title: '{article['title']}'")
+
+        # 1. 投稿画像の生成（テンプレート背景＋カテゴリ別フォント色タイトル）
+        image_path = create_post_image(
+            title=article["title"],
+            category=article["category"],
+            output_path="post_image.jpg"
+        )
+
+        # 2. Geminiでのキャプション生成 & ハードガードレール（免責事項強制追加）
+        caption = generate_caption_with_gemini(article)
+
+        # 3. Instagramへ投稿
+        success = post_to_instagram(image_path, caption)
+        
+        # テスト・初回実行時はハッシュを記録
+        seen_hashes.add(article["hash"])
+        save_seen_hashes(seen_hashes)
+        new_posts_count += 1
+        print(f"[Info] Processed article: '{article['title']}'")
+        break  # 1回の実行で1件ずつ安全に投稿
+
+    print(f"[Info] Bot execution finished. Processed {new_posts_count} new posts.")
 
 if __name__ == "__main__":
     main()
