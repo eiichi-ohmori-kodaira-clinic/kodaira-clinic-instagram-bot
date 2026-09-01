@@ -20,8 +20,8 @@ PENDING_POSTS_FILE = Path("pending_posts.json")
 EXEC_LOG_FILE = Path("execution_log.txt")
 ASSETS_DIR = Path("assets")
 
-NEWS_COLOR = (230, 81, 0)     # オレンジ (お知らせ)
-SUGAR_COLOR = (46, 125, 50)   # グリーン (糖のお話)
+NEWS_COLOR = (255, 102, 0)     # 明るいオレンジ (お知らせ)
+SUGAR_COLOR = (40, 180, 70)    # 明るいグリーン (糖のお話)
 
 # Instagram 標準画像サイズ (1080 x 1080 px 正方形)
 CANVAS_SIZE = 1080
@@ -68,7 +68,7 @@ def save_posted_url(data: dict):
     with open(POST_URLS_FILE, "w", encoding="utf-8") as f:
         json.dump(urls, f, ensure_ascii=False, indent=2)
 
-def get_japanese_font(font_size: int = 58):
+def get_japanese_font(font_size: int = 70):
     """Linux(GitHub Actions)およびWindowsの日本語フォントを確実に読み込む"""
     font_candidates = [
         # 同梱・ローカルフォント
@@ -78,8 +78,8 @@ def get_japanese_font(font_size: int = 58):
         "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
         "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
         "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
-        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
         "/usr/share/fonts/truetype/noto/NotoSansCJK-Bold.ttc",
+        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
         # Windows パス
         "C:\\Windows\\Fonts\\meiryo.ttc",
         "C:\\Windows\\Fonts\\msgothic.ttc",
@@ -119,7 +119,10 @@ def clean_title_for_display(title: str, category: str) -> str:
     """画像のテンプレート背景に合わせてタイトル文字列を調整する"""
     display_title = title.strip()
     if category == "sugar":
+        # 【糖のお話】や【お知らせ】のカテゴリプレフィックスを除去
         display_title = re.sub(r"^【?(糖のお話|お知らせ)】?\s*[\s　:-]*", "", display_title)
+        # ユーザー指示: 糖のお話タイトルの「糖尿病」は含めない
+        display_title = re.sub(r"^糖尿病\s*[\s　:-]*", "", display_title)
     return display_title
 
 def find_template_file(base_name: str) -> Path:
@@ -154,7 +157,7 @@ def prepare_square_template(template_path: Path, target_size: int = 1080) -> Ima
     return base_img
 
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
-    """正方形1080x1080pxキャンバスで白縁取り付き太字タイトル画像を生成"""
+    """正方形1080x1080pxキャンバスで超大型太字・白太縁取りタイトル画像を生成"""
     base_name = "sugar_template" if category == "sugar" else "news_template"
     template_path = find_template_file(base_name)
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
@@ -166,14 +169,15 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
     draw = ImageDraw.Draw(base_img)
 
     display_title = clean_title_for_display(title, category)
-    font_size = int(img_height * 0.054)  # 1080px上で約58pxの見やすいフォント
+    # 超大型・極太フォント (70px)
+    font_size = int(img_height * 0.065)  # 1080px上で約70pxの特大インパクトフォント
     font = get_japanese_font(font_size)
 
-    max_text_width = int(img_width * 0.82)
+    max_text_width = int(img_width * 0.84)
     lines = wrap_text(display_title, font, max_text_width)
     
     if len(lines) > 3:
-        font_size = int(img_height * 0.044)
+        font_size = int(img_height * 0.050)  # 長文でも54pxの大型フォントを維持
         font = get_japanese_font(font_size)
         lines = wrap_text(display_title, font, max_text_width)
 
@@ -194,16 +198,16 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
         x = (img_width - w_text) // 2
         y = start_y + i * line_height
         
-        # 白い太縁取り付きでテキストを描画 (stroke_width=6, stroke_fill=白)
+        # クッキリした太い白縁取り付きでテキストを描画 (stroke_width=8, stroke_fill=純白)
         draw.text(
             (x, y),
             line,
             font=font,
             fill=text_color,
-            stroke_width=6,
+            stroke_width=8,
             stroke_fill=(255, 255, 255)
         )
-        log_debug(f"Drew stroked line '{line}' at x={x}, y={y} with fill={text_color}")
+        log_debug(f"Drew bold stroked line '{line}' at x={x}, y={y} with fill={text_color}")
 
     base_img.save(output_path, "JPEG", quality=95)
     log_debug(f"Created post image ({category}): {output_path} (final size: {base_img.size})")
