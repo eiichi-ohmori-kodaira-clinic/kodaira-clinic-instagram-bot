@@ -8,7 +8,7 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 from google import genai
-from PIL import Image, ImageDraw, ImageFont, ImageChops
+from PIL import Image, ImageDraw, ImageFont
 
 # --- 定数および設定 ---
 SITE_URL = "https://kodaira.clinic/"
@@ -22,6 +22,10 @@ ASSETS_DIR = Path("assets")
 
 NEWS_COLOR = (230, 81, 0)     # オレンジ (お知らせ)
 SUGAR_COLOR = (46, 125, 50)   # グリーン (糖のお話)
+
+# Instagram 標準画像サイズ (1080 x 1350 px, 4:5 縦長)
+CANVAS_WIDTH = 1080
+CANVAS_HEIGHT = 1350
 
 def log_debug(message: str):
     timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -66,20 +70,34 @@ def save_posted_url(data: dict):
         json.dump(urls, f, ensure_ascii=False, indent=2)
 
 def get_japanese_font(font_size: int = 60):
+    """Linux(GitHub Actions)およびWindowsの日本語フォントを確実に読み込む"""
     font_candidates = [
+        # 同梱・ローカルフォント
+        ASSETS_DIR / "fonts" / "meiryo.ttc",
+        ASSETS_DIR / "fonts" / "JapaneseFont.ttf",
+        # Linux (Ubuntu apt-get fonts-noto-cjk / fonts-ipafont-gothic) パス
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
+        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/noto/NotoSansCJK-Bold.ttc",
+        # Windows パス
         "C:\\Windows\\Fonts\\meiryo.ttc",
         "C:\\Windows\\Fonts\\msgothic.ttc",
         "C:\\Windows\\Fonts\\yuGothM.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
     ]
     for font_path in font_candidates:
-        if os.path.exists(font_path):
+        font_str = str(font_path)
+        if os.path.exists(font_str):
             try:
-                return ImageFont.truetype(font_path, font_size)
-            except Exception:
+                font = ImageFont.truetype(font_str, font_size)
+                log_debug(f"Loaded font successfully: {font_str} (size: {font_size})")
+                return font
+            except Exception as e:
+                log_debug(f"Failed loading font {font_str}: {e}")
                 continue
+    
+    log_debug("WARNING: No CJK Japanese font found. Falling back to default.")
     return ImageFont.load_default()
 
 def wrap_text(text: str, font: ImageFont.FreeTypeFont, max_width: int) -> list:
@@ -113,73 +131,67 @@ def find_template_file(base_name: str) -> Path:
             return p
     return None
 
-def prepare_square_template(template_path: Path, target_size: int = 1080) -> Image.Image:
-    """元画像のアスペクト比を一切歪めず、1080x1080の正方形キャンバスの中央にフィット合成したテンプレート画像を返す"""
-    if template_path and template_path.exists():
-        raw_img = Image.open(template_path).convert("RGBA")
-        w, h = raw_img.size
-        
-        # 縦横比を完全に保持したまま target_size に収めるスケール計算
-        scale = min(target_size / w, target_size / h)
-        new_w = max(1, int(w * scale))
-        new_h = max(1, int(h * scale))
-        
-        resized = raw_img.resize((new_w, new_h), Image.Resampling.LANCZOS)
-        
-        # 正方形キャンバスを作成して白背景でアルファ合成
-        square_canvas = Image.new("RGBA", (target_size, target_size), (255, 255, 255, 255))
-        paste_x = (target_size - new_w) // 2
-        paste_y = (target_size - new_h) // 2
-        square_canvas.paste(resized, (paste_x, paste_y), resized)
-        
-        base_img = square_canvas.convert("RGB")
-    else:
-        base_img = Image.new("RGB", (target_size, target_size), (255, 255, 255))
-    return base_img
-
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
+    """Instagram標準規格 1080x1350px (4:5 縦長) キャンバスで無加工テンプレートと文字を合成"""
     base_name = "sugar_template" if category == "sugar" else "news_template"
     template_path = find_template_file(base_name)
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
 
-    # 正方形1080x1080にフィットさせた非破壊テンプレート基盤画像
-    base_img = prepare_square_template(template_path, target_size=1080)
+    # 白背景 1080x1350px (4:5) キャンバス作成
+    canvas = Image.new("RGB", (CANVAS_WIDTH, CANVAS_HEIGHT), (255, 255, 255))
 
-    img_width, img_height = base_img.size
-    draw = ImageDraw.Draw(base_img)
+    if template_path and template_path.exists():
+        raw_img = Image.open(template_path).convert("RGBA")
+        w, h = raw_img.size
 
+        # 横幅 1080px に合わせたアスペクト比 100% 保持の非破壊リサイズ
+        scale = CANVAS_WIDTH / w
+        new_w = CANVAS_WIDTH
+        new_h = int(h * scale)
+        
+        resized = raw_img.resize((new_w, new_h), Image.Resampling.LANCZOS)
+        
+        # キャンバス上部 (Y: 40px) の位置にテンプレート画像を貼り付け
+        paste_y = 40
+        canvas.paste(resized, (0, paste_y), resized)
+        template_bottom_y = paste_y + new_h
+    else:
+        template_bottom_y = 800
+
+    draw = ImageDraw.Draw(canvas)
     display_title = clean_title_for_display(title, category)
-    font_size = int(img_height * 0.058)  # 1080px上で約62pxの明確で大きなフォント
+
+    # 日本語大文字フォント (サイズ: 62px)
+    font_size = 62
     font = get_japanese_font(font_size)
 
-    max_text_width = int(img_width * 0.78)
+    max_text_width = int(CANVAS_WIDTH * 0.82)
     lines = wrap_text(display_title, font, max_text_width)
     
     if len(lines) > 3:
-        font_size = int(img_height * 0.046)
+        font_size = 50
         font = get_japanese_font(font_size)
         lines = wrap_text(display_title, font, max_text_width)
 
-    line_height = font_size * 1.35
+    line_height = font_size * 1.4
     total_text_height = len(lines) * line_height
 
-    # イラストデザイン内の下部テキストスペース中央に確実に配置
-    if category == "sugar":
-        target_center_y = int(img_height * 0.70)
-    else:
-        target_center_y = int(img_height * 0.74)
+    # イラスト画像直下の下部スペース (Y: template_bottom_y ~ 1350px) の中央に文字を配置
+    available_height = CANVAS_HEIGHT - template_bottom_y
+    target_center_y = template_bottom_y + (available_height / 2) - 20
 
     start_y = target_center_y - (total_text_height / 2)
 
     for i, line in enumerate(lines):
         bbox = font.getbbox(line)
-        w = bbox[2] - bbox[0]
-        x = (img_width - w) // 2
+        w_text = bbox[2] - bbox[0]
+        x = (CANVAS_WIDTH - w_text) // 2
         y = start_y + i * line_height
         draw.text((x, y), line, font=font, fill=text_color)
+        log_debug(f"Drew line '{line}' at x={x}, y={y} with fill={text_color}")
 
-    base_img.save(output_path, "JPEG", quality=95)
-    log_debug(f"Created post image ({category}): {output_path} (final size: {base_img.size})")
+    canvas.save(output_path, "JPEG", quality=95)
+    log_debug(f"Created post image ({category}): {output_path} (final size: {canvas.size})")
     return output_path
 
 def scrape_kodaira_clinic():
