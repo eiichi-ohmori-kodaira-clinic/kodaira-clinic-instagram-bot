@@ -68,7 +68,7 @@ def save_posted_url(data: dict):
     with open(POST_URLS_FILE, "w", encoding="utf-8") as f:
         json.dump(urls, f, ensure_ascii=False, indent=2)
 
-def get_japanese_font(font_size: int = 90):
+def get_japanese_font(font_size: int = 110):
     """Linux(GitHub Actions)およびWindowsの日本語フォントを確実に読み込む"""
     font_candidates = [
         # 同梱・ローカルフォント
@@ -157,7 +157,7 @@ def prepare_square_template(template_path: Path, target_size: int = 1080) -> Ima
     return base_img
 
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
-    """正方形1080x1080pxキャンバスで超絶大型90px太字・10px白フチタイトル画像を生成"""
+    """正方形1080x1080pxキャンバスで文字太さ倍増・110px超巨大文字タイトル画像を生成"""
     base_name = "sugar_template" if category == "sugar" else "news_template"
     template_path = find_template_file(base_name)
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
@@ -170,15 +170,15 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
 
     display_title = clean_title_for_display(title, category)
     
-    # 超絶大型90pxのダイナミック太字フォント
-    font_size = int(img_height * 0.085)  # 1080px上で約92pxの極太超大型インパクトフォント
+    # 文字サイズをさらに大きく110pxに拡大
+    font_size = int(img_height * 0.105)  # 1080px上で約113pxの超巨大フォント
     font = get_japanese_font(font_size)
 
-    max_text_width = int(img_width * 0.86)
+    max_text_width = int(img_width * 0.88)
     lines = wrap_text(display_title, font, max_text_width)
     
     if len(lines) > 2:
-        font_size = int(img_height * 0.068)  # 複数行でも約73pxの超大型フォントを死守
+        font_size = int(img_height * 0.078)  # 複数行でも約84pxの巨大フォント
         font = get_japanese_font(font_size)
         lines = wrap_text(display_title, font, max_text_width)
 
@@ -199,16 +199,16 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
         x = (img_width - w_text) // 2
         y = start_y + i * line_height
         
-        # 10pxの厚肉白フチ付きでダイナミックにテキストを描画
+        # ユーザー指定: 「太さは倍に（文字線を同色ストロークで2倍に太化）、縁取りは太くしなくてよい」
         draw.text(
             (x, y),
             line,
             font=font,
             fill=text_color,
-            stroke_width=10,
-            stroke_fill=(255, 255, 255)
+            stroke_width=6,              # 文字本体の太さを倍に拡張
+            stroke_fill=text_color       # 縁取りではなく文字同色で線自体を太化
         )
-        log_debug(f"Drew super bold stroked line '{line}' at x={x}, y={y} with fill={text_color}")
+        log_debug(f"Drew double-thick line '{line}' at x={x}, y={y} with fill={text_color}")
 
     base_img.save(output_path, "JPEG", quality=95)
     log_debug(f"Created post image ({category}): {output_path} (final size: {base_img.size})")
