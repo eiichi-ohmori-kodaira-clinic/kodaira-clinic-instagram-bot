@@ -68,7 +68,7 @@ def save_posted_url(data: dict):
     with open(POST_URLS_FILE, "w", encoding="utf-8") as f:
         json.dump(urls, f, ensure_ascii=False, indent=2)
 
-def get_japanese_font(font_size: int = 60):
+def get_japanese_font(font_size: int = 52):
     font_candidates = [
         "C:\\Windows\\Fonts\\meiryo.ttc",
         "C:\\Windows\\Fonts\\msgothic.ttc",
@@ -108,30 +108,49 @@ def clean_title_for_display(title: str, category: str) -> str:
         display_title = re.sub(r"^【?(糖のお話|お知らせ)】?\s*[\s　:-]*", "", display_title)
     return display_title
 
+def prepare_square_template(template_path: Path, target_size: int = 1080) -> Image.Image:
+    """左右の透明余白を除去して正方形1080x1080にリサイズ合成したテンプレート画像を返す"""
+    if template_path.exists():
+        raw_img = Image.open(template_path).convert("RGBA")
+        bbox = raw_img.getbbox()
+        if bbox:
+            cropped = raw_img.crop(bbox)
+        else:
+            cropped = raw_img
+        
+        w, h = cropped.size
+        size = max(w, h)
+        
+        # 正方形キャンバスを作成して白背景でアルファ合成
+        square_canvas = Image.new("RGBA", (size, size), (255, 255, 255, 255))
+        paste_x = (size - w) // 2
+        paste_y = (size - h) // 2
+        square_canvas.paste(cropped, (paste_x, paste_y), cropped)
+        
+        base_img = square_canvas.resize((target_size, target_size), Image.Resampling.LANCZOS).convert("RGB")
+    else:
+        base_img = Image.new("RGB", (target_size, target_size), (255, 255, 255))
+    return base_img
+
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
     template_path = SUGAR_TEMPLATE_PATH if category == "sugar" else NEWS_TEMPLATE_PATH
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
 
-    if template_path.exists():
-        raw_img = Image.open(template_path).convert("RGBA")
-        base_img = Image.new("RGB", raw_img.size, (255, 255, 255))
-        base_img.paste(raw_img, (0, 0), raw_img)
-    else:
-        base_img = Image.new("RGB", (1080, 1080), (255, 255, 255))
+    # 正方形1080x1080にフィットさせたテンプレート基盤画像
+    base_img = prepare_square_template(template_path, target_size=1080)
 
     img_width, img_height = base_img.size
     draw = ImageDraw.Draw(base_img)
 
     display_title = clean_title_for_display(title, category)
-    font_size = int(img_height * 0.055)
+    font_size = int(img_height * 0.052)  # 1080px上で約56pxの読みやすいフォント
     font = get_japanese_font(font_size)
 
-    max_text_width = int(img_width * 0.82)
+    max_text_width = int(img_width * 0.80)
     lines = wrap_text(display_title, font, max_text_width)
     
-    # 3行を超える長文タイトルの場合、フォントサイズを動的に調整
     if len(lines) > 3:
-        font_size = int(img_height * 0.045)
+        font_size = int(img_height * 0.042)
         font = get_japanese_font(font_size)
         lines = wrap_text(display_title, font, max_text_width)
 
@@ -141,7 +160,7 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
     if category == "sugar":
         target_center_y = int(img_height * 0.74)
     else:
-        target_center_y = int(img_height * 0.80)
+        target_center_y = int(img_height * 0.78)
 
     start_y = target_center_y - (total_text_height / 2)
 
@@ -153,7 +172,7 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
         draw.text((x, y), line, font=font, fill=text_color)
 
     base_img.save(output_path, "JPEG", quality=95)
-    log_debug(f"Created post image ({category}): {output_path} (size: {base_img.size})")
+    log_debug(f"Created post image ({category}): {output_path} (final size: {base_img.size})")
     return output_path
 
 def scrape_kodaira_clinic():
