@@ -1,0 +1,8 @@
+[2026-09-01 09:01:04] === MODE: PREPARE ===
+[2026-09-01 09:01:04] Scraping https://kodaira.clinic/...
+[2026-09-01 09:01:06] Found 50 articles.
+[2026-09-01 09:01:06] Created post image (news): post_news.jpg
+[2026-09-01 09:01:07] Gemini API generation failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-01 09:01:07] Created post image (sugar): post_sugar.jpg
+[2026-09-01 09:01:08] Gemini API generation failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-01 09:01:08] Prepared 2 pending posts in pending_posts.json
