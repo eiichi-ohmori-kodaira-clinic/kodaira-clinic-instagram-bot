@@ -20,8 +20,9 @@ PENDING_POSTS_FILE = Path("pending_posts.json")
 EXEC_LOG_FILE = Path("execution_log.txt")
 ASSETS_DIR = Path("assets")
 
-NEWS_COLOR = (255, 102, 0)     # 明るいオレンジ (お知らせ)
-SUGAR_COLOR = (40, 180, 70)    # 明るいグリーン (糖のお話)
+# 白みのある柔らかい上品なパステル・マイルドカラー設定
+NEWS_COLOR = (255, 130, 45)     # 白みのあるオレンジ (お知らせ)
+SUGAR_COLOR = (70, 175, 85)     # 白みのあるグリーン (糖のお話)
 
 # Instagram 標準画像サイズ (1080 x 1080 px 正方形)
 CANVAS_SIZE = 1080
@@ -68,7 +69,7 @@ def save_posted_url(data: dict):
     with open(POST_URLS_FILE, "w", encoding="utf-8") as f:
         json.dump(urls, f, ensure_ascii=False, indent=2)
 
-def get_japanese_font(font_size: int = 110):
+def get_japanese_font(font_size: int = 90):
     """Linux(GitHub Actions)およびWindowsの日本語フォントを確実に読み込む"""
     font_candidates = [
         # 同梱・ローカルフォント
@@ -157,7 +158,7 @@ def prepare_square_template(template_path: Path, target_size: int = 1080) -> Ima
     return base_img
 
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
-    """正方形1080x1080pxキャンバスで文字太さ倍増・110px超巨大文字タイトル画像を生成"""
+    """正方形1080x1080pxキャンバスで90px文字・白縁取り・白みのあるパステルカラータイトル画像を生成"""
     base_name = "sugar_template" if category == "sugar" else "news_template"
     template_path = find_template_file(base_name)
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
@@ -170,19 +171,19 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
 
     display_title = clean_title_for_display(title, category)
     
-    # 文字サイズをさらに大きく110pxに拡大
-    font_size = int(img_height * 0.105)  # 1080px上で約113pxの超巨大フォント
+    # ユーザー指定: タイトルの文字サイズは 90px
+    font_size = int(img_height * 0.083)  # 1080px上で90px固定
     font = get_japanese_font(font_size)
 
-    max_text_width = int(img_width * 0.88)
+    max_text_width = int(img_width * 0.85)
     lines = wrap_text(display_title, font, max_text_width)
     
     if len(lines) > 2:
-        font_size = int(img_height * 0.078)  # 複数行でも約84pxの巨大フォント
+        font_size = int(img_height * 0.065)  # 長文時のみ70px調整
         font = get_japanese_font(font_size)
         lines = wrap_text(display_title, font, max_text_width)
 
-    line_height = font_size * 1.30
+    line_height = font_size * 1.32
     total_text_height = len(lines) * line_height
 
     # カテゴリに応じた下部エリアのテキスト中央位置計算
@@ -199,16 +200,16 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
         x = (img_width - w_text) // 2
         y = start_y + i * line_height
         
-        # ユーザー指定: 「太さは倍に（文字線を同色ストロークで2倍に太化）、縁取りは太くしなくてよい」
+        # ユーザー指定: 縁取りの色は白 (stroke_width=6, stroke_fill=純白)
         draw.text(
             (x, y),
             line,
             font=font,
             fill=text_color,
-            stroke_width=6,              # 文字本体の太さを倍に拡張
-            stroke_fill=text_color       # 縁取りではなく文字同色で線自体を太化
+            stroke_width=6,
+            stroke_fill=(255, 255, 255)
         )
-        log_debug(f"Drew double-thick line '{line}' at x={x}, y={y} with fill={text_color}")
+        log_debug(f"Drew 90px line with white stroke '{line}' at x={x}, y={y} with fill={text_color}")
 
     base_img.save(output_path, "JPEG", quality=95)
     log_debug(f"Created post image ({category}): {output_path} (final size: {base_img.size})")
