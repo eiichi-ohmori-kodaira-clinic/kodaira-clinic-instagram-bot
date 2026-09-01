@@ -32,3 +32,21 @@
 [2026-09-01 09:31:21] Created post image (sugar): post_sugar.jpg
 [2026-09-01 09:31:23] Gemini API generation failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
 [2026-09-01 09:31:23] Prepared 2 pending posts in pending_posts.json
+[2026-09-01 09:31:25] === MODE: PUBLISH ===
+[2026-09-01 09:31:25] Publishing 'news': '休診日のお知らせ'...
+[2026-09-01 09:31:25] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-09-01 09:31:25] Publishing image to Instagram via Meta Graph API...
+[2026-09-01 09:31:25] Target IG_USER_ID: 1275271822340651
+[2026-09-01 09:31:25] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
+[2026-09-01 09:31:25] Container API Response: {'error': {'message': "Unsupported post request. Object with ID '1275271822340651' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'AwcXJ6LSd-xoS8IilsXX69l'}}
+[2026-09-01 09:31:25] ERROR: Failed to create media container. Meta API Response: {'error': {'message': "Unsupported post request. Object with ID '1275271822340651' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'AwcXJ6LSd-xoS8IilsXX69l'}}
+[2026-09-01 09:31:25] Publish failed for '休診日のお知らせ': {'success': False, 'response': {'error': {'message': "Unsupported post request. Object with ID '1275271822340651' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'AwcXJ6LSd-xoS8IilsXX69l'}}}
+[2026-09-01 09:31:25] Publishing 'sugar': '糖尿病　酷暑の過ごし方'...
+[2026-09-01 09:31:25] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-09-01 09:31:25] Publishing image to Instagram via Meta Graph API...
+[2026-09-01 09:31:25] Target IG_USER_ID: 1275271822340651
+[2026-09-01 09:31:25] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
+[2026-09-01 09:31:25] Container API Response: {'error': {'message': "Unsupported post request. Object with ID '1275271822340651' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'A0rHeXxbQeM2UojbPEnAMJp'}}
+[2026-09-01 09:31:25] ERROR: Failed to create media container. Meta API Response: {'error': {'message': "Unsupported post request. Object with ID '1275271822340651' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'A0rHeXxbQeM2UojbPEnAMJp'}}
+[2026-09-01 09:31:25] Publish failed for '糖尿病　酷暑の過ごし方': {'success': False, 'response': {'error': {'message': "Unsupported post request. Object with ID '1275271822340651' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'A0rHeXxbQeM2UojbPEnAMJp'}}}
+[2026-09-01 09:31:25] Publish mode finished. Successfully published 0 posts.
