@@ -16,16 +16,22 @@ DISCLAIMER_TEXT = "※本投稿は情報提供を目的としており、個別�
 SEEN_HASHES_FILE = Path("seen_hashes.json")
 POST_URLS_FILE = Path("posted_urls.json")
 PENDING_POSTS_FILE = Path("pending_posts.json")
+EXEC_LOG_FILE = Path("execution_log.txt")
 ASSETS_DIR = Path("assets")
 
 NEWS_TEMPLATE_PATH = ASSETS_DIR / "news_template.png"
 SUGAR_TEMPLATE_PATH = ASSETS_DIR / "sugar_template.png"
 
-# フォント色設定
 NEWS_COLOR = (230, 81, 0)     # オレンジ (お知らせ)
 SUGAR_COLOR = (46, 125, 50)   # グリーン (糖のお話)
 
-# --- 免責事項ハードガードレール ---
+def log_debug(message: str):
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    log_str = f"[{timestamp}] {message}"
+    print(log_str)
+    with open(EXEC_LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(log_str + "\n")
+
 def ensure_disclaimer(caption: str) -> str:
     if DISCLAIMER_TEXT not in caption:
         caption = caption.strip() + "\n\n" + DISCLAIMER_TEXT
@@ -122,11 +128,11 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
         draw.text((x, y), line, font=font, fill=text_color)
 
     base_img.save(output_path, "JPEG", quality=95)
-    print(f"[Info] Created post image ({category}): {output_path}")
+    log_debug(f"Created post image ({category}): {output_path}")
     return output_path
 
 def scrape_kodaira_clinic():
-    print(f"[Info] Scraping {SITE_URL}...")
+    log_debug(f"Scraping {SITE_URL}...")
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
@@ -135,7 +141,7 @@ def scrape_kodaira_clinic():
         res.raise_for_status()
         res.encoding = res.apparent_encoding or "utf-8"
     except Exception as e:
-        print(f"[Error] Failed to fetch {SITE_URL}: {e}")
+        log_debug(f"Failed to fetch {SITE_URL}: {e}")
         return []
 
     soup = BeautifulSoup(res.text, "html.parser")
@@ -182,7 +188,7 @@ def scrape_kodaira_clinic():
             seen.add(item["hash"])
             unique_articles.append(item)
 
-    print(f"[Info] Found {len(unique_articles)} articles.")
+    log_debug(f"Found {len(unique_articles)} articles.")
     return unique_articles
 
 def generate_caption_with_gemini(article: dict) -> str:
@@ -190,7 +196,7 @@ def generate_caption_with_gemini(article: dict) -> str:
     category_label = "【糖のお話】" if article["category"] == "sugar" else "【お知らせ】"
 
     if not gemini_api_key:
-        print("[Warning] GEMINI_API_KEY is missing. Using fallback caption.")
+        log_debug("GEMINI_API_KEY is missing. Using fallback caption.")
         caption = f"{category_label} {article['title']}\n\n{article['body']}\n\n#小平内科糖尿病クリニック #内科 #糖尿病"
         return ensure_disclaimer(caption)
 
@@ -220,7 +226,7 @@ def generate_caption_with_gemini(article: dict) -> str:
         )
         caption = response.text.strip()
     except Exception as e:
-        print(f"[Error] Gemini API generation failed: {e}")
+        log_debug(f"Gemini API generation failed: {e}")
         caption = f"{category_label} {article['title']}\n\n{article['body']}\n\n#小平内科糖尿病クリニック"
 
     return ensure_disclaimer(caption)
@@ -229,16 +235,19 @@ def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
     ig_user_id = os.environ.get("IG_USER_ID")
     meta_access_token = os.environ.get("META_ACCESS_TOKEN")
 
+    log_debug(f"Checking credentials: IG_USER_ID exists={bool(ig_user_id)}, META_ACCESS_TOKEN exists={bool(meta_access_token)}")
+
     if not ig_user_id or not meta_access_token:
-        print("[Warning] IG_USER_ID or META_ACCESS_TOKEN is missing. Skipping API publish.")
+        log_debug("ERROR: IG_USER_ID or META_ACCESS_TOKEN is missing. Aborting publish.")
         return {"success": False, "reason": "Missing Credentials"}
 
     repo_owner = "eiichi-ohmori-kodaira-clinic"
     repo_name = "kodaira-clinic-instagram-bot"
     image_raw_url = f"https://raw.githubusercontent.com/{repo_owner}/{repo_name}/main/{image_path}"
 
-    print(f"[Info] Publishing image to Instagram via Meta Graph API...")
-    print(f"[Info] Image URL: {image_raw_url}")
+    log_debug(f"Publishing image to Instagram via Meta Graph API...")
+    log_debug(f"Target IG_USER_ID: {ig_user_id}")
+    log_debug(f"Image URL: {image_raw_url}")
 
     # 1. コンテナ作成
     container_url = f"https://graph.facebook.com/v20.0/{ig_user_id}/media"
@@ -250,14 +259,14 @@ def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
     try:
         res = requests.post(container_url, data=params, timeout=30)
         res_data = res.json()
-        print(f"[Debug] Container API Response: {res_data}")
+        log_debug(f"Container API Response: {res_data}")
         if "id" not in res_data:
-            print(f"[Error] Failed to create media container: {res_data}")
+            log_debug(f"ERROR: Failed to create media container. Meta API Response: {res_data}")
             return {"success": False, "response": res_data}
         container_id = res_data["id"]
-        print(f"[Info] Media container created: {container_id}")
+        log_debug(f"Media container created successfully. ID: {container_id}")
     except Exception as e:
-        print(f"[Error] Container API error: {e}")
+        log_debug(f"ERROR: Container API Exception: {e}")
         return {"success": False, "error": str(e)}
 
     # 2. ポーリング
@@ -270,14 +279,14 @@ def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
             st_res = requests.get(status_url, params=status_params, timeout=15)
             st_data = st_res.json()
             status_code = st_data.get("status_code")
-            print(f"[Info] Polling status ({attempt + 1}/10): {status_code}")
+            log_debug(f"Polling status ({attempt + 1}/10): {status_code} (Full: {st_data})")
             if status_code == "FINISHED":
                 break
             elif status_code in ["ERROR", "EXPIRED"]:
-                print(f"[Error] Container processing failed with status: {status_code}")
+                log_debug(f"ERROR: Container processing failed with status: {status_code}. Response: {st_data}")
                 return {"success": False, "response": st_data}
         except Exception as e:
-            print(f"[Warning] Polling request error: {e}")
+            log_debug(f"Polling Exception: {e}")
 
     # 3. 公開
     publish_url = f"https://graph.facebook.com/v20.0/{ig_user_id}/media_publish"
@@ -288,29 +297,28 @@ def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
     try:
         pub_res = requests.post(publish_url, data=pub_params, timeout=30)
         pub_data = pub_res.json()
-        print(f"[Debug] Publish API Response: {pub_data}")
+        log_debug(f"Publish API Response: {pub_data}")
         if "id" in pub_data:
             media_id = pub_data["id"]
-            print(f"[Success] Instagram post published! Post ID: {media_id}")
+            log_debug(f"SUCCESS: Instagram post published! Post ID: {media_id}")
             
             permalink_url = f"https://graph.facebook.com/v20.0/{media_id}"
             p_res = requests.get(permalink_url, params={"fields": "permalink", "access_token": meta_access_token}, timeout=15)
             p_data = p_res.json()
             permalink = p_data.get("permalink", f"https://www.instagram.com/p/{media_id}/")
-            print(f"[Success] Instagram Post Direct URL (Permalink): {permalink}")
+            log_debug(f"SUCCESS: Instagram Post Direct URL (Permalink): {permalink}")
             
             save_posted_url({"title": title, "id": media_id, "permalink": permalink})
             return {"success": True, "media_id": media_id, "permalink": permalink}
         else:
-            print(f"[Error] Publish failed: {pub_data}")
+            log_debug(f"ERROR: Publish failed. Response: {pub_data}")
             return {"success": False, "response": pub_data}
     except Exception as e:
-        print(f"[Error] Publish API error: {e}")
+        log_debug(f"ERROR: Publish API Exception: {e}")
         return {"success": False, "error": str(e)}
 
 def mode_prepare():
-    """ステップ1: 記事をパースして画像とキャプションを生成"""
-    print("[Info] Mode: PREPARE (Generate images and captions)")
+    log_debug("=== MODE: PREPARE ===")
     seen_hashes = load_seen_hashes()
     articles = scrape_kodaira_clinic()
 
@@ -331,7 +339,7 @@ def mode_prepare():
     targets = [a for a in [target_news, target_sugar] if a is not None]
 
     if not targets:
-        print("[Info] No new unposted articles found.")
+        log_debug("No new unposted articles found.")
         with open(PENDING_POSTS_FILE, "w", encoding="utf-8") as f:
             json.dump([], f)
         return
@@ -349,24 +357,23 @@ def mode_prepare():
 
     with open(PENDING_POSTS_FILE, "w", encoding="utf-8") as f:
         json.dump(pending, f, ensure_ascii=False, indent=2)
-    print(f"[Info] Prepared {len(pending)} pending posts in {PENDING_POSTS_FILE}")
+    log_debug(f"Prepared {len(pending)} pending posts in {PENDING_POSTS_FILE}")
 
 def mode_publish():
-    """ステップ2: GitHubにプッシュされた画像を Meta Graph API へ投稿"""
-    print("[Info] Mode: PUBLISH (Publish to Instagram)")
+    log_debug("=== MODE: PUBLISH ===")
     if not PENDING_POSTS_FILE.exists():
-        print("[Info] No pending_posts.json found.")
+        log_debug("No pending_posts.json found.")
         return
 
     try:
         with open(PENDING_POSTS_FILE, "r", encoding="utf-8") as f:
             pending = json.load(f)
     except Exception as e:
-        print(f"[Error] Failed to read pending posts: {e}")
+        log_debug(f"Failed to read pending posts: {e}")
         return
 
     if not pending:
-        print("[Info] Pending posts list is empty.")
+        log_debug("Pending posts list is empty.")
         return
 
     seen_hashes = load_seen_hashes()
@@ -377,7 +384,7 @@ def mode_publish():
         image_path = item["image_path"]
         caption = item["caption"]
 
-        print(f"\n[Info] Publishing '{article['category']}': '{article['title']}'...")
+        log_debug(f"Publishing '{article['category']}': '{article['title']}'...")
         result = post_to_instagram(image_path, caption, title=article["title"])
 
         if result.get("success"):
@@ -385,10 +392,10 @@ def mode_publish():
             posted_count += 1
             time.sleep(3)
         else:
-            print(f"[Warning] API publish was not successful: {result}")
+            log_debug(f"Publish failed for '{article['title']}': {result}")
 
     save_seen_hashes(seen_hashes)
-    print(f"\n[Info] Publish mode finished. Processed {posted_count} posts.")
+    log_debug(f"Publish mode finished. Successfully published {posted_count} posts.")
 
 def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else "all"
