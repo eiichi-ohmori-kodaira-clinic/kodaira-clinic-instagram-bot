@@ -68,7 +68,7 @@ def save_posted_url(data: dict):
     with open(POST_URLS_FILE, "w", encoding="utf-8") as f:
         json.dump(urls, f, ensure_ascii=False, indent=2)
 
-def get_japanese_font(font_size: int = 70):
+def get_japanese_font(font_size: int = 90):
     """Linux(GitHub Actions)およびWindowsの日本語フォントを確実に読み込む"""
     font_candidates = [
         # 同梱・ローカルフォント
@@ -121,7 +121,7 @@ def clean_title_for_display(title: str, category: str) -> str:
     if category == "sugar":
         # 【糖のお話】や【お知らせ】のカテゴリプレフィックスを除去
         display_title = re.sub(r"^【?(糖のお話|お知らせ)】?\s*[\s　:-]*", "", display_title)
-        # ユーザー指示: 糖のお話タイトルの「糖尿病」は含めない
+        # 糖のお話タイトルの「糖尿病」を含めない
         display_title = re.sub(r"^糖尿病\s*[\s　:-]*", "", display_title)
     return display_title
 
@@ -157,7 +157,7 @@ def prepare_square_template(template_path: Path, target_size: int = 1080) -> Ima
     return base_img
 
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
-    """正方形1080x1080pxキャンバスで超大型太字・白太縁取りタイトル画像を生成"""
+    """正方形1080x1080pxキャンバスで超絶大型90px太字・10px白フチタイトル画像を生成"""
     base_name = "sugar_template" if category == "sugar" else "news_template"
     template_path = find_template_file(base_name)
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
@@ -169,19 +169,20 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
     draw = ImageDraw.Draw(base_img)
 
     display_title = clean_title_for_display(title, category)
-    # 超大型・極太フォント (70px)
-    font_size = int(img_height * 0.065)  # 1080px上で約70pxの特大インパクトフォント
+    
+    # 超絶大型90pxのダイナミック太字フォント
+    font_size = int(img_height * 0.085)  # 1080px上で約92pxの極太超大型インパクトフォント
     font = get_japanese_font(font_size)
 
-    max_text_width = int(img_width * 0.84)
+    max_text_width = int(img_width * 0.86)
     lines = wrap_text(display_title, font, max_text_width)
     
-    if len(lines) > 3:
-        font_size = int(img_height * 0.050)  # 長文でも54pxの大型フォントを維持
+    if len(lines) > 2:
+        font_size = int(img_height * 0.068)  # 複数行でも約73pxの超大型フォントを死守
         font = get_japanese_font(font_size)
         lines = wrap_text(display_title, font, max_text_width)
 
-    line_height = font_size * 1.35
+    line_height = font_size * 1.30
     total_text_height = len(lines) * line_height
 
     # カテゴリに応じた下部エリアのテキスト中央位置計算
@@ -198,16 +199,16 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
         x = (img_width - w_text) // 2
         y = start_y + i * line_height
         
-        # クッキリした太い白縁取り付きでテキストを描画 (stroke_width=8, stroke_fill=純白)
+        # 10pxの厚肉白フチ付きでダイナミックにテキストを描画
         draw.text(
             (x, y),
             line,
             font=font,
             fill=text_color,
-            stroke_width=8,
+            stroke_width=10,
             stroke_fill=(255, 255, 255)
         )
-        log_debug(f"Drew bold stroked line '{line}' at x={x}, y={y} with fill={text_color}")
+        log_debug(f"Drew super bold stroked line '{line}' at x={x}, y={y} with fill={text_color}")
 
     base_img.save(output_path, "JPEG", quality=95)
     log_debug(f"Created post image ({category}): {output_path} (final size: {base_img.size})")
