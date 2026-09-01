@@ -28,17 +28,30 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Monitor & Post Script
+      - name: Step 1 - Prepare Images and Captions
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python main.py prepare
+
+      - name: Step 2 - Commit and Push Generated Images
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add post_news.jpg post_sugar.jpg pending_posts.json 2>/dev/null || true
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: deploy generated post images [skip ci]" && git push)
+
+      - name: Step 3 - Publish to Instagram via Meta Graph API
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
         run: |
-          python main.py
+          python main.py publish
 
-      - name: Commit and Push State Updates
+      - name: Step 4 - Commit and Push State & Posted URLs
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add seen_hashes.json posted_urls.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update state files [skip ci]" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update seen hashes and posted urls [skip ci]" && git push)

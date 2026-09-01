@@ -15,6 +15,7 @@ SITE_URL = "https://kodaira.clinic/"
 DISCLAIMER_TEXT = "※本投稿は情報提供を目的としており、個別の診断・治療は医師にご相談ください。"
 SEEN_HASHES_FILE = Path("seen_hashes.json")
 POST_URLS_FILE = Path("posted_urls.json")
+PENDING_POSTS_FILE = Path("pending_posts.json")
 ASSETS_DIR = Path("assets")
 
 NEWS_TEMPLATE_PATH = ASSETS_DIR / "news_template.png"
@@ -26,23 +27,19 @@ SUGAR_COLOR = (46, 125, 50)   # グリーン (糖のお話)
 
 # --- 免責事項ハードガードレール ---
 def ensure_disclaimer(caption: str) -> str:
-    """キャプション末尾に免責事項が必ず含まれるように強制追加する"""
     if DISCLAIMER_TEXT not in caption:
         caption = caption.strip() + "\n\n" + DISCLAIMER_TEXT
     return caption
 
-# --- ハッシュ値計算 ---
 def calculate_hash(key_string: str) -> str:
     return hashlib.sha256(key_string.encode("utf-8")).hexdigest()
 
-# --- 状態管理 ---
 def load_seen_hashes() -> set:
     if SEEN_HASHES_FILE.exists():
         try:
             with open(SEEN_HASHES_FILE, "r", encoding="utf-8") as f:
                 return set(json.load(f))
-        except Exception as e:
-            print(f"[Warning] Failed to load seen hashes: {e}")
+        except Exception:
             return set()
     return set()
 
@@ -62,7 +59,6 @@ def save_posted_url(data: dict):
     with open(POST_URLS_FILE, "w", encoding="utf-8") as f:
         json.dump(urls, f, ensure_ascii=False, indent=2)
 
-# --- 日本語フォント取得 ---
 def get_japanese_font(font_size: int = 48):
     font_candidates = [
         "C:\\Windows\\Fonts\\meiryo.ttc",
@@ -80,7 +76,6 @@ def get_japanese_font(font_size: int = 48):
                 continue
     return ImageFont.load_default()
 
-# --- テキストの自動折返し計算 ---
 def wrap_text(text: str, font: ImageFont.FreeTypeFont, max_width: int) -> list:
     lines = []
     current_line = ""
@@ -97,23 +92,16 @@ def wrap_text(text: str, font: ImageFont.FreeTypeFont, max_width: int) -> list:
         lines.append(current_line)
     return lines
 
-# --- 投稿画像生成 ---
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
     img_width, img_height = 1080, 1350
-    
-    if category == "sugar":
-        template_path = SUGAR_TEMPLATE_PATH
-        text_color = SUGAR_COLOR
-    else:
-        template_path = NEWS_TEMPLATE_PATH
-        text_color = NEWS_COLOR
+    template_path = SUGAR_TEMPLATE_PATH if category == "sugar" else NEWS_TEMPLATE_PATH
+    text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
 
     if template_path.exists():
         base_img = Image.open(template_path).convert("RGB")
         if base_img.size != (img_width, img_height):
             base_img = base_img.resize((img_width, img_height), Image.Resampling.LANCZOS)
     else:
-        print(f"[Warning] Template {template_path} not found. Creating fallback background.")
         base_img = Image.new("RGB", (img_width, img_height), (245, 247, 248))
 
     draw = ImageDraw.Draw(base_img)
@@ -122,7 +110,6 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
 
     max_text_width = 850
     lines = wrap_text(title, font, max_text_width)
-    
     line_height = font_size * 1.5
     total_text_height = len(lines) * line_height
     start_y = (img_height - total_text_height) // 2 + 80
@@ -138,7 +125,6 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
     print(f"[Info] Created post image ({category}): {output_path}")
     return output_path
 
-# --- HPスクレイピング ---
 def scrape_kodaira_clinic():
     print(f"[Info] Scraping {SITE_URL}...")
     headers = {
@@ -155,15 +141,11 @@ def scrape_kodaira_clinic():
     soup = BeautifulSoup(res.text, "html.parser")
     articles = []
 
-    news_wrapper = soup.find("div", class_="wrapper_news")
-    if not news_wrapper:
-        news_wrapper = soup
-
+    news_wrapper = soup.find("div", class_="wrapper_news") or soup
     dls = news_wrapper.find_all("dl", class_=re.compile(r"list_news"))
     for dl in dls:
         dts = dl.find_all("dt")
         dds = dl.find_all("dd")
-        
         for dt, dd in zip(dts, dds):
             dt_classes = dt.get("class", [])
             cat_str = " ".join(dt_classes)
@@ -203,7 +185,6 @@ def scrape_kodaira_clinic():
     print(f"[Info] Found {len(unique_articles)} articles.")
     return unique_articles
 
-# --- Geminiキャプション生成 ---
 def generate_caption_with_gemini(article: dict) -> str:
     gemini_api_key = os.environ.get("GEMINI_API_KEY")
     category_label = "【糖のお話】" if article["category"] == "sugar" else "【お知らせ】"
@@ -244,7 +225,6 @@ def generate_caption_with_gemini(article: dict) -> str:
 
     return ensure_disclaimer(caption)
 
-# --- Instagram Graph API 投稿 ---
 def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
     ig_user_id = os.environ.get("IG_USER_ID")
     meta_access_token = os.environ.get("META_ACCESS_TOKEN")
@@ -270,7 +250,7 @@ def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
     try:
         res = requests.post(container_url, data=params, timeout=30)
         res_data = res.json()
-        print(f"[Debug] Container response: {res_data}")
+        print(f"[Debug] Container API Response: {res_data}")
         if "id" not in res_data:
             print(f"[Error] Failed to create media container: {res_data}")
             return {"success": False, "response": res_data}
@@ -280,7 +260,7 @@ def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
         print(f"[Error] Container API error: {e}")
         return {"success": False, "error": str(e)}
 
-    # 2. ステータスポーリング
+    # 2. ポーリング
     status_url = f"https://graph.facebook.com/v20.0/{container_id}"
     status_params = {"fields": "status_code", "access_token": meta_access_token}
     
@@ -299,7 +279,7 @@ def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
         except Exception as e:
             print(f"[Warning] Polling request error: {e}")
 
-    # 3. メディア公開
+    # 3. 公開
     publish_url = f"https://graph.facebook.com/v20.0/{ig_user_id}/media_publish"
     pub_params = {
         "creation_id": container_id,
@@ -308,12 +288,11 @@ def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
     try:
         pub_res = requests.post(publish_url, data=pub_params, timeout=30)
         pub_data = pub_res.json()
-        print(f"[Debug] Publish response: {pub_data}")
+        print(f"[Debug] Publish API Response: {pub_data}")
         if "id" in pub_data:
             media_id = pub_data["id"]
             print(f"[Success] Instagram post published! Post ID: {media_id}")
             
-            # パーマリンク取得
             permalink_url = f"https://graph.facebook.com/v20.0/{media_id}"
             p_res = requests.get(permalink_url, params={"fields": "permalink", "access_token": meta_access_token}, timeout=15)
             p_data = p_res.json()
@@ -329,14 +308,11 @@ def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
         print(f"[Error] Publish API error: {e}")
         return {"success": False, "error": str(e)}
 
-def main():
-    print("[Info] Starting Kodaira Clinic Instagram Auto-Post Bot...")
+def mode_prepare():
+    """ステップ1: 記事をパースして画像とキャプションを生成"""
+    print("[Info] Mode: PREPARE (Generate images and captions)")
     seen_hashes = load_seen_hashes()
     articles = scrape_kodaira_clinic()
-
-    if not articles:
-        print("[Info] No articles found on clinic website.")
-        return
 
     target_news = None
     target_sugar = None
@@ -352,32 +328,77 @@ def main():
         if target_news and target_sugar:
             break
 
-    targets_to_post = [a for a in [target_news, target_sugar] if a is not None]
+    targets = [a for a in [target_news, target_sugar] if a is not None]
 
-    if not targets_to_post:
-        print("[Info] No new unposted articles found for either category.")
+    if not targets:
+        print("[Info] No new unposted articles found.")
+        with open(PENDING_POSTS_FILE, "w", encoding="utf-8") as f:
+            json.dump([], f)
         return
 
-    posted_count = 0
-    for article in targets_to_post:
-        print(f"\n[Info] Processing category '{article['category']}': '{article['title']}'")
-
+    pending = []
+    for article in targets:
         image_name = f"post_{article['category']}.jpg"
-        image_path = create_post_image(
-            title=article["title"],
-            category=article["category"],
-            output_path=image_name
-        )
-
+        create_post_image(article["title"], article["category"], image_name)
         caption = generate_caption_with_gemini(article)
+        pending.append({
+            "article": article,
+            "image_path": image_name,
+            "caption": caption
+        })
+
+    with open(PENDING_POSTS_FILE, "w", encoding="utf-8") as f:
+        json.dump(pending, f, ensure_ascii=False, indent=2)
+    print(f"[Info] Prepared {len(pending)} pending posts in {PENDING_POSTS_FILE}")
+
+def mode_publish():
+    """ステップ2: GitHubにプッシュされた画像を Meta Graph API へ投稿"""
+    print("[Info] Mode: PUBLISH (Publish to Instagram)")
+    if not PENDING_POSTS_FILE.exists():
+        print("[Info] No pending_posts.json found.")
+        return
+
+    try:
+        with open(PENDING_POSTS_FILE, "r", encoding="utf-8") as f:
+            pending = json.load(f)
+    except Exception as e:
+        print(f"[Error] Failed to read pending posts: {e}")
+        return
+
+    if not pending:
+        print("[Info] Pending posts list is empty.")
+        return
+
+    seen_hashes = load_seen_hashes()
+    posted_count = 0
+
+    for item in pending:
+        article = item["article"]
+        image_path = item["image_path"]
+        caption = item["caption"]
+
+        print(f"\n[Info] Publishing '{article['category']}': '{article['title']}'...")
         result = post_to_instagram(image_path, caption, title=article["title"])
 
-        seen_hashes.add(article["hash"])
-        save_seen_hashes(seen_hashes)
-        posted_count += 1
-        time.sleep(3)
+        if result.get("success"):
+            seen_hashes.add(article["hash"])
+            posted_count += 1
+            time.sleep(3)
+        else:
+            print(f"[Warning] API publish was not successful: {result}")
 
-    print(f"\n[Info] Bot execution finished. Processed {posted_count} posts.")
+    save_seen_hashes(seen_hashes)
+    print(f"\n[Info] Publish mode finished. Processed {posted_count} posts.")
+
+def main():
+    mode = sys.argv[1] if len(sys.argv) > 1 else "all"
+    if mode == "prepare":
+        mode_prepare()
+    elif mode == "publish":
+        mode_publish()
+    else:
+        mode_prepare()
+        mode_publish()
 
 if __name__ == "__main__":
     main()
