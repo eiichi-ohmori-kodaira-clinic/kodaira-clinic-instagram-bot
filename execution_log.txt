@@ -6,3 +6,21 @@
 [2026-09-01 09:01:07] Created post image (sugar): post_sugar.jpg
 [2026-09-01 09:01:08] Gemini API generation failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
 [2026-09-01 09:01:08] Prepared 2 pending posts in pending_posts.json
+[2026-09-01 09:01:10] === MODE: PUBLISH ===
+[2026-09-01 09:01:10] Publishing 'news': '休診日のお知らせ'...
+[2026-09-01 09:01:10] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-09-01 09:01:10] Publishing image to Instagram via Meta Graph API...
+[2026-09-01 09:01:10] Target IG_USER_ID: Aa2n5mHs8904GTECWxxiyPw
+[2026-09-01 09:01:10] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
+[2026-09-01 09:01:10] Container API Response: {'error': {'message': "Unsupported post request. Object with ID 'Aa2n5mHs8904GTECWxxiyPw' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'A4d1yuJ2752u3rrai3E02ZD'}}
+[2026-09-01 09:01:10] ERROR: Failed to create media container. Meta API Response: {'error': {'message': "Unsupported post request. Object with ID 'Aa2n5mHs8904GTECWxxiyPw' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'A4d1yuJ2752u3rrai3E02ZD'}}
+[2026-09-01 09:01:10] Publish failed for '休診日のお知らせ': {'success': False, 'response': {'error': {'message': "Unsupported post request. Object with ID 'Aa2n5mHs8904GTECWxxiyPw' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'A4d1yuJ2752u3rrai3E02ZD'}}}
+[2026-09-01 09:01:10] Publishing 'sugar': '糖尿病　酷暑の過ごし方'...
+[2026-09-01 09:01:10] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-09-01 09:01:10] Publishing image to Instagram via Meta Graph API...
+[2026-09-01 09:01:10] Target IG_USER_ID: Aa2n5mHs8904GTECWxxiyPw
+[2026-09-01 09:01:10] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
+[2026-09-01 09:01:10] Container API Response: {'error': {'message': "Unsupported post request. Object with ID 'Aa2n5mHs8904GTECWxxiyPw' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'ALS1a_ebOrTK550hgAn1Lp6'}}
+[2026-09-01 09:01:10] ERROR: Failed to create media container. Meta API Response: {'error': {'message': "Unsupported post request. Object with ID 'Aa2n5mHs8904GTECWxxiyPw' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'ALS1a_ebOrTK550hgAn1Lp6'}}
+[2026-09-01 09:01:10] Publish failed for '糖尿病　酷暑の過ごし方': {'success': False, 'response': {'error': {'message': "Unsupported post request. Object with ID 'Aa2n5mHs8904GTECWxxiyPw' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api", 'type': 'GraphMethodException', 'code': 100, 'error_subcode': 33, 'fbtrace_id': 'ALS1a_ebOrTK550hgAn1Lp6'}}}
+[2026-09-01 09:01:10] Publish mode finished. Successfully published 0 posts.
