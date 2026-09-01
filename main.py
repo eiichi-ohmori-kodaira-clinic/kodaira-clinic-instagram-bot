@@ -20,9 +20,9 @@ PENDING_POSTS_FILE = Path("pending_posts.json")
 EXEC_LOG_FILE = Path("execution_log.txt")
 ASSETS_DIR = Path("assets")
 
-# 過去投稿と100%合致させた正統派カラー設定
-NEWS_COLOR = (230, 81, 0)     # オレンジ (お知らせ)
-SUGAR_COLOR = (46, 125, 50)   # グリーン (糖のお話)
+# 濃すぎない明るく上品なフォントカラー設定
+NEWS_COLOR = (255, 120, 20)    # 明るく綺麗なオレンジ (お知らせ)
+SUGAR_COLOR = (60, 165, 70)    # 明るく綺麗なグリーン (糖のお話)
 
 # Instagram 標準画像サイズ (1080 x 1080 px 正方形)
 CANVAS_SIZE = 1080
@@ -159,11 +159,9 @@ def prepare_square_template(template_path: Path, target_size: int = 1080) -> Ima
     return base_img
 
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
-    """過去投稿の色味と極太二重ストローク（Noto Sans JP Black + 2重描画）でタイトル画像を生成"""
+    """明るい品のあるカラー・超極太 Noto Sans JP Black・純白縁取り統一でタイトル画像を生成"""
     base_name = "sugar_template" if category == "sugar" else "news_template"
     template_path = find_template_file(base_name)
-    
-    # 過去投稿のカラーコードに完全一致
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
 
     # 正方形1080x1080にフィットさせたテンプレート基盤画像
@@ -203,26 +201,16 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
         x = (img_width - w_text) // 2
         y = start_y + i * line_height
         
-        # 1段目: 純白の厚手フチ取り (stroke_width=10)
-        draw.text(
-            (x, y),
-            line,
-            font=font,
-            fill=(255, 255, 255),
-            stroke_width=10,
-            stroke_fill=(255, 255, 255)
-        )
-        
-        # 2段目: その上に文字同色ストロークを重ねて「極太（ウルトラボールド）」を極限表現
+        # お知らせ・糖のお話ともに、純白のしっかりとした縁取り (stroke_width=6, stroke_fill=純白) で統一
         draw.text(
             (x, y),
             line,
             font=font,
             fill=text_color,
-            stroke_width=4,
-            stroke_fill=text_color
+            stroke_width=6,
+            stroke_fill=(255, 255, 255)
         )
-        log_debug(f"Drew ultra-heavy stroked line '{line}' at x={x}, y={y} with fill={text_color}")
+        log_debug(f"Drew 90px line with white stroke '{line}' at x={x}, y={y} with fill={text_color}")
 
     base_img.save(output_path, "JPEG", quality=95)
     log_debug(f"Created post image ({category}): {output_path} (final size: {base_img.size})")
