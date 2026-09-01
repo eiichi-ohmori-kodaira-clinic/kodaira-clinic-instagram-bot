@@ -8,7 +8,7 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 from google import genai
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageChops
 
 # --- 定数および設定 ---
 SITE_URL = "https://kodaira.clinic/"
@@ -19,9 +19,6 @@ POST_URLS_FILE = Path("posted_urls.json")
 PENDING_POSTS_FILE = Path("pending_posts.json")
 EXEC_LOG_FILE = Path("execution_log.txt")
 ASSETS_DIR = Path("assets")
-
-NEWS_TEMPLATE_PATH = ASSETS_DIR / "news_template.png"
-SUGAR_TEMPLATE_PATH = ASSETS_DIR / "sugar_template.png"
 
 NEWS_COLOR = (230, 81, 0)     # オレンジ (お知らせ)
 SUGAR_COLOR = (46, 125, 50)   # グリーン (糖のお話)
@@ -108,15 +105,35 @@ def clean_title_for_display(title: str, category: str) -> str:
         display_title = re.sub(r"^【?(糖のお話|お知らせ)】?\s*[\s　:-]*", "", display_title)
     return display_title
 
+def find_template_file(base_name: str) -> Path:
+    """拡張子 (.png, .jpg, .jpeg 等) を自動探索してテンプレート画像パスを返す"""
+    for ext in [".png", ".jpg", ".jpeg", ".PNG", ".JPG"]:
+        p = ASSETS_DIR / f"{base_name}{ext}"
+        if p.exists():
+            return p
+    return None
+
 def prepare_square_template(template_path: Path, target_size: int = 1080) -> Image.Image:
-    """左右の透明余白を除去して正方形1080x1080にリサイズ合成したテンプレート画像を返す"""
-    if template_path.exists():
-        raw_img = Image.open(template_path).convert("RGBA")
-        bbox = raw_img.getbbox()
+    """余白（白または透明）を自動検出してクロップし、1080x1080の正方形キャンバスにフィットさせた画像を返す"""
+    if template_path and template_path.exists():
+        raw_img = Image.open(template_path)
+        img_rgba = raw_img.convert("RGBA")
+        
+        # 白背景・透明余白以外のコンテンツ領域を判定
+        r, g, b, a = img_rgba.split()
+        mask_r = r.point(lambda p: 255 if p < 240 else 0)
+        mask_g = g.point(lambda p: 255 if p < 240 else 0)
+        mask_b = b.point(lambda p: 255 if p < 240 else 0)
+        mask_a = a.point(lambda p: 255 if p > 0 else 0)
+        
+        mask_color = ImageChops.add(ImageChops.add(mask_r, mask_g), mask_b)
+        final_mask = ImageChops.multiply(mask_color, mask_a)
+        
+        bbox = final_mask.getbbox()
         if bbox:
-            cropped = raw_img.crop(bbox)
+            cropped = img_rgba.crop(bbox)
         else:
-            cropped = raw_img
+            cropped = img_rgba
         
         w, h = cropped.size
         size = max(w, h)
@@ -133,7 +150,8 @@ def prepare_square_template(template_path: Path, target_size: int = 1080) -> Ima
     return base_img
 
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
-    template_path = SUGAR_TEMPLATE_PATH if category == "sugar" else NEWS_TEMPLATE_PATH
+    base_name = "sugar_template" if category == "sugar" else "news_template"
+    template_path = find_template_file(base_name)
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
 
     # 正方形1080x1080にフィットさせたテンプレート基盤画像
