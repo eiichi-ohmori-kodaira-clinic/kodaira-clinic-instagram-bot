@@ -98,27 +98,39 @@ def wrap_text(text: str, font: ImageFont.FreeTypeFont, max_width: int) -> list:
         lines.append(current_line)
     return lines
 
+def clean_title_for_display(title: str, category: str) -> str:
+    """画像のテンプレート背景に合わせてタイトル文字列を調整する"""
+    display_title = title.strip()
+    if category == "sugar":
+        # テンプレート自体に「糖のお話」が含まれているため、重複タイトルを除去
+        display_title = re.sub(r"^糖のお話\s*[\s　:-]*", "", display_title)
+        display_title = re.sub(r"^糖尿病\s*[\s　:-]*", "", display_title)
+    return display_title
+
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
-    img_width, img_height = 1080, 1350
     template_path = SUGAR_TEMPLATE_PATH if category == "sugar" else NEWS_TEMPLATE_PATH
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
 
     if template_path.exists():
         base_img = Image.open(template_path).convert("RGB")
-        if base_img.size != (img_width, img_height):
-            base_img = base_img.resize((img_width, img_height), Image.Resampling.LANCZOS)
     else:
-        base_img = Image.new("RGB", (img_width, img_height), (245, 247, 248))
+        img_w, img_h = (1080, 1080)
+        base_img = Image.new("RGB", (img_w, img_h), (245, 247, 248))
 
+    img_width, img_height = base_img.size
     draw = ImageDraw.Draw(base_img)
-    font_size = 52
+
+    display_title = clean_title_for_display(title, category)
+    font_size = int(img_height * 0.05)
     font = get_japanese_font(font_size)
 
-    max_text_width = 850
-    lines = wrap_text(title, font, max_text_width)
-    line_height = font_size * 1.5
+    max_text_width = int(img_width * 0.8)
+    lines = wrap_text(display_title, font, max_text_width)
+    line_height = font_size * 1.4
     total_text_height = len(lines) * line_height
-    start_y = (img_height - total_text_height) // 2 + 80
+
+    # 下部領域（下から25%の位置）にテキストを配置
+    start_y = int(img_height * 0.72) - (total_text_height / 2)
 
     for i, line in enumerate(lines):
         bbox = font.getbbox(line)
