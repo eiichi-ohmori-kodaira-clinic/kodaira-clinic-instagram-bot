@@ -36,11 +36,7 @@ def log_debug(message: str):
 def ensure_disclaimer(caption: str) -> str:
     """キャプション末尾に指定ハッシュタグおよび免責事項を確実に付与する"""
     caption = caption.strip()
-    
-    # 既存の余分なハッシュタグを末尾から整理
     caption = re.sub(r"(#[\w一-龠ぁ-んァ-ヶー]+\s*)+$", "", caption).strip()
-    
-    # 指定ハッシュタグと免責事項を追加
     caption = f"{caption}\n\n{HASHTAGS_TEXT}\n\n{DISCLAIMER_TEXT}"
     return caption
 
@@ -72,7 +68,7 @@ def save_posted_url(data: dict):
     with open(POST_URLS_FILE, "w", encoding="utf-8") as f:
         json.dump(urls, f, ensure_ascii=False, indent=2)
 
-def get_japanese_font(font_size: int = 56):
+def get_japanese_font(font_size: int = 60):
     font_candidates = [
         "C:\\Windows\\Fonts\\meiryo.ttc",
         "C:\\Windows\\Fonts\\msgothic.ttc",
@@ -109,7 +105,6 @@ def clean_title_for_display(title: str, category: str) -> str:
     """画像のテンプレート背景に合わせてタイトル文字列を調整する"""
     display_title = title.strip()
     if category == "sugar":
-        # 【糖のお話】や【お知らせ】などの角括弧付き・なしのカテゴリプレフィックスのみを除去
         display_title = re.sub(r"^【?(糖のお話|お知らせ)】?\s*[\s　:-]*", "", display_title)
     return display_title
 
@@ -118,16 +113,20 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
 
     if template_path.exists():
-        base_img = Image.open(template_path).convert("RGB")
+        raw_img = Image.open(template_path)
+        if raw_img.mode in ("RGBA", "LA") or (raw_img.mode == "P" and "transparency" in raw_img.info):
+            base_img = Image.new("RGB", raw_img.size, (255, 255, 255))
+            base_img.paste(raw_img, mask=raw_img.split()[-1] if raw_img.mode == "RGBA" else None)
+        else:
+            base_img = raw_img.convert("RGB")
     else:
-        img_w, img_h = (1024, 1024)
-        base_img = Image.new("RGB", (img_w, img_h), (245, 247, 248))
+        base_img = Image.new("RGB", (1080, 1080), (255, 255, 255))
 
     img_width, img_height = base_img.size
     draw = ImageDraw.Draw(base_img)
 
     display_title = clean_title_for_display(title, category)
-    font_size = int(img_height * 0.055)  # 読みやすい文字サイズ
+    font_size = int(img_height * 0.055)
     font = get_japanese_font(font_size)
 
     max_text_width = int(img_width * 0.82)
@@ -135,12 +134,9 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
     line_height = font_size * 1.35
     total_text_height = len(lines) * line_height
 
-    # カテゴリに応じた下部エリアの最適な高さY位置計算
     if category == "sugar":
-        # 糖のお話: 中央区切り線（y ~ 650px）の下側に配置
         target_center_y = int(img_height * 0.74)
     else:
-        # お知らせ: 花輪ロゴの下側中央に配置
         target_center_y = int(img_height * 0.80)
 
     start_y = target_center_y - (total_text_height / 2)
@@ -153,7 +149,7 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
         draw.text((x, y), line, font=font, fill=text_color)
 
     base_img.save(output_path, "JPEG", quality=95)
-    log_debug(f"Created post image ({category}): {output_path}")
+    log_debug(f"Created post image ({category}): {output_path} (size: {base_img.size})")
     return output_path
 
 def scrape_kodaira_clinic():
