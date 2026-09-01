@@ -70,9 +70,10 @@ def save_posted_url(data: dict):
         json.dump(urls, f, ensure_ascii=False, indent=2)
 
 def get_japanese_font(font_size: int = 90):
-    """最優先で超極太 Noto Sans JP Black を読み込み、OS環境問わず 100% 確実に描画する"""
+    """最優先で角ばった超極太 Dela Gothic One を読み込み、OS環境問わず 100% 確実に描画する"""
     font_candidates = [
-        # 同梱最優先超極太フォント (Noto Sans JP Black)
+        # 同梱最優先角張り超極太フォント (Dela Gothic One)
+        ASSETS_DIR / "fonts" / "DelaGothicOne-Regular.ttf",
         ASSETS_DIR / "fonts" / "NotoSansJP-Black.ttf",
         ASSETS_DIR / "fonts" / "meiryo.ttc",
         ASSETS_DIR / "fonts" / "JapaneseFont.ttf",
@@ -159,7 +160,7 @@ def prepare_square_template(template_path: Path, target_size: int = 1080) -> Ima
     return base_img
 
 def create_post_image(title: str, category: str, output_path: str = "post_image.jpg") -> str:
-    """お知らせ・糖のお話ともに完全同等の超極太二重ストロークでタイトル画像を生成"""
+    """角ばった超極太 Dela Gothic One・90px文字・純白縁取り（二層描画）でタイトル画像を生成"""
     base_name = "sugar_template" if category == "sugar" else "news_template"
     template_path = find_template_file(base_name)
     text_color = SUGAR_COLOR if category == "sugar" else NEWS_COLOR
@@ -172,7 +173,7 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
 
     display_title = clean_title_for_display(title, category)
     
-    # 90px 超極太 Noto Sans JP Black
+    # 90px Dela Gothic One
     font_size = int(img_height * 0.083)
     font = get_japanese_font(font_size)
 
@@ -201,26 +202,25 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
         x = (img_width - w_text) // 2
         y = start_y + i * line_height
         
-        # 【1層目（下地）】: 太い純白の縁取り (stroke_width=14, stroke_fill=純白)
+        # 【1層目（下地白縁取り）】: クッキリとした純白ベース描画 (stroke_width=8, fill=純白)
         draw.text(
             (x, y),
             line,
             font=font,
             fill=(255, 255, 255),
-            stroke_width=14,
+            stroke_width=8,
             stroke_fill=(255, 255, 255)
         )
         
-        # 【2層目（上塗り）】: お知らせ・糖のお話ともに文字同色ストローク(stroke_width=6)で完全に同等の超極太文字線に統一！
+        # 【2層目（本体上塗り）】: Dela Gothic One の元の文字骨格を崩さずクリアに描画 (stroke_width=0)
         draw.text(
             (x, y),
             line,
             font=font,
             fill=text_color,
-            stroke_width=6,
-            stroke_fill=text_color
+            stroke_width=0
         )
-        log_debug(f"Drew unified heavy stroked line '{line}' at x={x}, y={y} with fill={text_color}")
+        log_debug(f"Drew Dela Gothic One line '{line}' at x={x}, y={y} with fill={text_color}")
 
     base_img.save(output_path, "JPEG", quality=95)
     log_debug(f"Created post image ({category}): {output_path} (final size: {base_img.size})")
