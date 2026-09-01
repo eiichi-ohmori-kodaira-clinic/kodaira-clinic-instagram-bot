@@ -13,6 +13,7 @@ from PIL import Image, ImageDraw, ImageFont
 # --- 定数および設定 ---
 SITE_URL = "https://kodaira.clinic/"
 DISCLAIMER_TEXT = "※本投稿は情報提供を目的としており、個別の診断・治療は医師にご相談ください。"
+HASHTAGS_TEXT = "#小平市 #内科 #糖尿病"
 SEEN_HASHES_FILE = Path("seen_hashes.json")
 POST_URLS_FILE = Path("posted_urls.json")
 PENDING_POSTS_FILE = Path("pending_posts.json")
@@ -33,8 +34,14 @@ def log_debug(message: str):
         f.write(log_str + "\n")
 
 def ensure_disclaimer(caption: str) -> str:
-    if DISCLAIMER_TEXT not in caption:
-        caption = caption.strip() + "\n\n" + DISCLAIMER_TEXT
+    """キャプション末尾に指定ハッシュタグおよび免責事項を確実に付与する"""
+    caption = caption.strip()
+    
+    # 既存の余分なハッシュタグを末尾から整理
+    caption = re.sub(r"(#[\w一-龠ぁ-んァ-ヶー]+\s*)+$", "", caption).strip()
+    
+    # 指定ハッシュタグと免責事項を追加
+    caption = f"{caption}\n\n{HASHTAGS_TEXT}\n\n{DISCLAIMER_TEXT}"
     return caption
 
 def calculate_hash(key_string: str) -> str:
@@ -65,7 +72,7 @@ def save_posted_url(data: dict):
     with open(POST_URLS_FILE, "w", encoding="utf-8") as f:
         json.dump(urls, f, ensure_ascii=False, indent=2)
 
-def get_japanese_font(font_size: int = 48):
+def get_japanese_font(font_size: int = 56):
     font_candidates = [
         "C:\\Windows\\Fonts\\meiryo.ttc",
         "C:\\Windows\\Fonts\\msgothic.ttc",
@@ -102,6 +109,7 @@ def clean_title_for_display(title: str, category: str) -> str:
     """画像のテンプレート背景に合わせてタイトル文字列を調整する"""
     display_title = title.strip()
     if category == "sugar":
+        # 【糖のお話】や【お知らせ】などの角括弧付き・なしのカテゴリプレフィックスのみを除去
         display_title = re.sub(r"^【?(糖のお話|お知らせ)】?\s*[\s　:-]*", "", display_title)
     return display_title
 
@@ -112,22 +120,30 @@ def create_post_image(title: str, category: str, output_path: str = "post_image.
     if template_path.exists():
         base_img = Image.open(template_path).convert("RGB")
     else:
-        img_w, img_h = (1080, 1080)
+        img_w, img_h = (1024, 1024)
         base_img = Image.new("RGB", (img_w, img_h), (245, 247, 248))
 
     img_width, img_height = base_img.size
     draw = ImageDraw.Draw(base_img)
 
     display_title = clean_title_for_display(title, category)
-    font_size = int(img_height * 0.05)
+    font_size = int(img_height * 0.055)  # 読みやすい文字サイズ
     font = get_japanese_font(font_size)
 
-    max_text_width = int(img_width * 0.8)
+    max_text_width = int(img_width * 0.82)
     lines = wrap_text(display_title, font, max_text_width)
-    line_height = font_size * 1.4
+    line_height = font_size * 1.35
     total_text_height = len(lines) * line_height
 
-    start_y = int(img_height * 0.72) - (total_text_height / 2)
+    # カテゴリに応じた下部エリアの最適な高さY位置計算
+    if category == "sugar":
+        # 糖のお話: 中央区切り線（y ~ 650px）の下側に配置
+        target_center_y = int(img_height * 0.74)
+    else:
+        # お知らせ: 花輪ロゴの下側中央に配置
+        target_center_y = int(img_height * 0.80)
+
+    start_y = target_center_y - (total_text_height / 2)
 
     for i, line in enumerate(lines):
         bbox = font.getbbox(line)
@@ -206,7 +222,7 @@ def generate_caption_with_gemini(article: dict) -> str:
 
     if not gemini_api_key:
         log_debug("GEMINI_API_KEY is missing. Using fallback caption.")
-        caption = f"{category_label} {article['title']}\n\n{article['body']}\n\n#小平内科糖尿病クリニック #内科 #糖尿病"
+        caption = f"{category_label} {article['title']}\n\n{article['body']}"
         return ensure_disclaimer(caption)
 
     prompt = f"""
@@ -224,7 +240,7 @@ def generate_caption_with_gemini(article: dict) -> str:
 2. 専門用語をわかりやすく解説し、患者様や一般の方が親しみやすい丁寧な敬語（〜です、〜ます）を使用。
 3. 医療広告ガイドラインを遵守し、断定的な治療効果の保証や過剰な宣伝表現は避ける。
 4. 適切な絵文字や改行を入れて読みやすく装飾する。
-5. 文末にハッシュタグ（#小平内科糖尿病クリニック #糖尿病 #健康 #小平市 など）を追加。
+5. 本文作成のみを行い、文末のハッシュタグ（#小平市 #内科 #糖尿病）と免責事項は別途自動追加されます。
 """
 
     models_to_try = ["gemini-3.7-flash", "gemini-flash-latest"]
@@ -242,7 +258,7 @@ def generate_caption_with_gemini(article: dict) -> str:
             time.sleep(2)
 
     log_debug("Using fallback caption after Gemini models unavailable.")
-    caption = f"{category_label} {article['title']}\n\n{article['body']}\n\n#小平内科糖尿病クリニック"
+    caption = f"{category_label} {article['title']}\n\n{article['body']}"
     return ensure_disclaimer(caption)
 
 def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
