@@ -824,3 +824,14 @@
 [2026-09-01 22:55:11] SUCCESS: Instagram post published! Post ID: 17874116562631659
 [2026-09-01 22:55:11] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DcwyF6pD5c0/
 [2026-09-01 22:55:14] Publish mode finished. Successfully published 2 posts.
+[2026-09-02 22:54:37] === MODE: PREPARE ===
+[2026-09-02 22:54:37] Scraping https://kodaira.clinic/...
+[2026-09-02 22:54:39] Found 50 articles.
+[2026-09-02 22:54:39] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-02 22:54:39] Drew Dela Gothic One line '健康診査のご案内' at x=183, y=783.26 with fill=(255, 120, 20)
+[2026-09-02 22:54:39] Created post image (news): post_news.jpg (final size: (1080, 1080))
+[2026-09-02 22:55:02] Gemini API generation with gemini-3.7-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-02 22:55:09] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-02 22:55:09] Drew Dela Gothic One line '旅行2' at x=413, y=740.26 with fill=(60, 165, 70)
+[2026-09-02 22:55:09] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
+[2026-09-02 22:55:26] Prepared 2 pending posts in pending_posts.json
