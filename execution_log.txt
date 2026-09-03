@@ -859,3 +859,18 @@
 [2026-09-02 22:56:01] SUCCESS: Instagram post published! Post ID: 18119816953926559
 [2026-09-02 22:56:01] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DczW-v8FiQY/
 [2026-09-02 22:56:04] Publish mode finished. Successfully published 2 posts.
+[2026-09-03 22:53:45] === MODE: PREPARE ===
+[2026-09-03 22:53:45] Scraping https://kodaira.clinic/...
+[2026-09-03 22:53:46] Found 50 articles.
+[2026-09-03 22:53:47] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-03 22:53:47] Drew Dela Gothic One line '当院へはじめてご来院' at x=95, y=724.52 with fill=(255, 120, 20)
+[2026-09-03 22:53:47] Drew Dela Gothic One line 'の方へ' at x=406, y=842.0 with fill=(255, 120, 20)
+[2026-09-03 22:53:47] Created post image (news): post_news.jpg (final size: (1080, 1080))
+[2026-09-03 22:53:53] Gemini API generation with gemini-3.7-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-03 22:54:00] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-03 22:54:00] Drew Dela Gothic One line '旅行1' at x=424, y=740.26 with fill=(60, 165, 70)
+[2026-09-03 22:54:00] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
+[2026-09-03 22:54:07] Gemini API generation with gemini-3.7-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-03 22:54:15] Gemini API generation with gemini-flash-latest failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-03 22:54:17] Using fallback caption after Gemini models unavailable.
+[2026-09-03 22:54:17] Prepared 2 pending posts in pending_posts.json
