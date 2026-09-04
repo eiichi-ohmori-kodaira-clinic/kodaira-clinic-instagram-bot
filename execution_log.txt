@@ -909,3 +909,27 @@
 [2026-09-04 22:38:36] Drew Dela Gothic One line '食事と採血２' at x=273, y=740.26 with fill=(60, 165, 70)
 [2026-09-04 22:38:36] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
 [2026-09-04 22:38:47] Prepared 2 pending posts in pending_posts.json
+[2026-09-04 22:38:49] === MODE: PUBLISH ===
+[2026-09-04 22:38:49] Publishing 'news': '９月５日（土）の診療について'...
+[2026-09-04 22:38:49] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-09-04 22:38:49] Publishing image to Instagram via Meta Graph API...
+[2026-09-04 22:38:49] Target IG_USER_ID: 17841469684858061
+[2026-09-04 22:38:49] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
+[2026-09-04 22:38:56] Container API Response: {'id': '17947689408322829'}
+[2026-09-04 22:38:56] Media container created successfully. ID: 17947689408322829
+[2026-09-04 22:39:02] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947689408322829'})
+[2026-09-04 22:39:05] Publish API Response: {'id': '18131666848729805'}
+[2026-09-04 22:39:05] SUCCESS: Instagram post published! Post ID: 18131666848729805
+[2026-09-04 22:39:06] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dc4eoePII3m/
+[2026-09-04 22:39:09] Publishing 'sugar': '糖尿病　食事と採血２'...
+[2026-09-04 22:39:09] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-09-04 22:39:09] Publishing image to Instagram via Meta Graph API...
+[2026-09-04 22:39:09] Target IG_USER_ID: 17841469684858061
+[2026-09-04 22:39:09] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
+[2026-09-04 22:39:13] Container API Response: {'id': '17947689459322829'}
+[2026-09-04 22:39:13] Media container created successfully. ID: 17947689459322829
+[2026-09-04 22:39:19] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947689459322829'})
+[2026-09-04 22:39:22] Publish API Response: {'id': '18257265586307590'}
+[2026-09-04 22:39:22] SUCCESS: Instagram post published! Post ID: 18257265586307590
+[2026-09-04 22:39:22] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dc4eqo2IE40/
+[2026-09-04 22:39:25] Publish mode finished. Successfully published 2 posts.
