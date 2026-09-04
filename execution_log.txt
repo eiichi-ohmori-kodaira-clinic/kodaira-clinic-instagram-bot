@@ -898,3 +898,14 @@
 [2026-09-03 22:54:49] SUCCESS: Instagram post published! Post ID: 18178644244411170
 [2026-09-03 22:54:49] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dc17o2OCZHh/
 [2026-09-03 22:54:52] Publish mode finished. Successfully published 2 posts.
+[2026-09-04 22:38:27] === MODE: PREPARE ===
+[2026-09-04 22:38:27] Scraping https://kodaira.clinic/...
+[2026-09-04 22:38:29] Found 51 articles.
+[2026-09-04 22:38:30] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-04 22:38:30] Drew Dela Gothic One line '９月５日（土）の診療' at x=94, y=724.52 with fill=(255, 120, 20)
+[2026-09-04 22:38:30] Drew Dela Gothic One line 'について' at x=362, y=842.0 with fill=(255, 120, 20)
+[2026-09-04 22:38:30] Created post image (news): post_news.jpg (final size: (1080, 1080))
+[2026-09-04 22:38:36] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-04 22:38:36] Drew Dela Gothic One line '食事と採血２' at x=273, y=740.26 with fill=(60, 165, 70)
+[2026-09-04 22:38:36] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
+[2026-09-04 22:38:47] Prepared 2 pending posts in pending_posts.json
