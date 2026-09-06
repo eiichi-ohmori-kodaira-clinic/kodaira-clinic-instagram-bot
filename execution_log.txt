@@ -967,3 +967,16 @@
 [2026-09-05 22:29:48] SUCCESS: Instagram post published! Post ID: 18168709183455385
 [2026-09-05 22:29:49] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dc7CXgJm2Vv/
 [2026-09-05 22:29:52] Publish mode finished. Successfully published 2 posts.
+[2026-09-06 22:34:16] === MODE: PREPARE ===
+[2026-09-06 22:34:16] Scraping https://kodaira.clinic/...
+[2026-09-06 22:34:18] Found 51 articles.
+[2026-09-06 22:34:19] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-06 22:34:19] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 70)
+[2026-09-06 22:34:19] Drew Dela Gothic One line '高血圧、糖尿病、脂質異常症で' at x=90, y=749.6 with fill=(255, 120, 20)
+[2026-09-06 22:34:19] Drew Dela Gothic One line '通院中の患者さまへ' at x=224, y=842.0 with fill=(255, 120, 20)
+[2026-09-06 22:34:19] Created post image (news): post_news.jpg (final size: (1080, 1080))
+[2026-09-06 22:34:23] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-06 22:34:23] Drew Dela Gothic One line '熱中症　スポーツドリ' at x=95, y=681.52 with fill=(60, 165, 70)
+[2026-09-06 22:34:23] Drew Dela Gothic One line 'ンク' at x=451, y=799.0 with fill=(60, 165, 70)
+[2026-09-06 22:34:23] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
+[2026-09-06 22:34:26] Prepared 2 pending posts in pending_posts.json
