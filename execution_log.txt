@@ -1004,3 +1004,17 @@
 [2026-09-06 22:34:57] SUCCESS: Instagram post published! Post ID: 18207601819363441
 [2026-09-06 22:34:58] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dc9nwOumkG6/
 [2026-09-06 22:35:01] Publish mode finished. Successfully published 2 posts.
+[2026-09-07 23:10:07] === MODE: PREPARE ===
+[2026-09-07 23:10:07] Scraping https://kodaira.clinic/...
+[2026-09-07 23:10:09] Found 51 articles.
+[2026-09-07 23:10:09] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-07 23:10:09] Drew Dela Gothic One line '待合室での血圧測定の' at x=94, y=724.52 with fill=(255, 120, 20)
+[2026-09-07 23:10:09] Drew Dela Gothic One line 'お願い' at x=406, y=842.0 with fill=(255, 120, 20)
+[2026-09-07 23:10:09] Created post image (news): post_news.jpg (final size: (1080, 1080))
+[2026-09-07 23:11:08] Gemini API generation with gemini-3.7-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-07 23:11:41] Gemini API generation with gemini-flash-latest failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-07 23:11:43] Using fallback caption after Gemini models unavailable.
+[2026-09-07 23:11:44] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-07 23:11:44] Drew Dela Gothic One line '熱中症の症状' at x=272, y=740.26 with fill=(60, 165, 70)
+[2026-09-07 23:11:44] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
+[2026-09-07 23:12:07] Prepared 2 pending posts in pending_posts.json
