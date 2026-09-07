@@ -786,259 +786,39 @@
 [2026-09-01 11:55:16] SUCCESS: Instagram post published! Post ID: 17986868936859086
 [2026-09-01 11:55:17] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DcvmkhADaNo/
 [2026-09-01 11:55:20] Publish mode finished. Successfully published 2 posts.
-[2026-09-01 22:54:16] === MODE: PREPARE ===
-[2026-09-01 22:54:16] Scraping https://kodaira.clinic/...
-[2026-09-01 22:54:18] Found 50 articles.
-[2026-09-01 22:54:18] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-01 22:54:18] Drew Dela Gothic One line '非常勤医師の診察日に' at x=94, y=724.52 with fill=(255, 120, 20)
-[2026-09-01 22:54:18] Drew Dela Gothic One line 'ついて' at x=406, y=842.0 with fill=(255, 120, 20)
-[2026-09-01 22:54:18] Created post image (news): post_news.jpg (final size: (1080, 1080))
-[2026-09-01 22:54:22] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-01 22:54:22] Drew Dela Gothic One line '旅行3' at x=411, y=740.26 with fill=(60, 165, 70)
-[2026-09-01 22:54:22] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
-[2026-09-01 22:54:22] Gemini API generation with gemini-3.7-flash failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.7-flash\nPlease retry in 37.125414081s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.7-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '37s'}]}}
-[2026-09-01 22:54:38] Gemini API generation with gemini-flash-latest failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
-[2026-09-01 22:54:40] Using fallback caption after Gemini models unavailable.
-[2026-09-01 22:54:40] Prepared 2 pending posts in pending_posts.json
-[2026-09-01 22:54:42] === MODE: PUBLISH ===
-[2026-09-01 22:54:42] Publishing 'news': '非常勤医師の診察日について'...
-[2026-09-01 22:54:42] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-01 22:54:42] Publishing image to Instagram via Meta Graph API...
-[2026-09-01 22:54:42] Target IG_USER_ID: 17841469684858061
-[2026-09-01 22:54:42] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
-[2026-09-01 22:54:47] Container API Response: {'id': '17947278744322829'}
-[2026-09-01 22:54:47] Media container created successfully. ID: 17947278744322829
-[2026-09-01 22:54:53] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947278744322829'})
-[2026-09-01 22:54:55] Publish API Response: {'id': '18139126393613104'}
-[2026-09-01 22:54:55] SUCCESS: Instagram post published! Post ID: 18139126393613104
-[2026-09-01 22:54:56] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DcwyD6Pj9UL/
-[2026-09-01 22:54:59] Publishing 'sugar': '糖尿病　旅行3'...
-[2026-09-01 22:54:59] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-01 22:54:59] Publishing image to Instagram via Meta Graph API...
-[2026-09-01 22:54:59] Target IG_USER_ID: 17841469684858061
-[2026-09-01 22:54:59] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
-[2026-09-01 22:55:02] Container API Response: {'id': '17947278777322829'}
-[2026-09-01 22:55:02] Media container created successfully. ID: 17947278777322829
-[2026-09-01 22:55:08] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947278777322829'})
-[2026-09-01 22:55:11] Publish API Response: {'id': '17874116562631659'}
-[2026-09-01 22:55:11] SUCCESS: Instagram post published! Post ID: 17874116562631659
-[2026-09-01 22:55:11] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DcwyF6pD5c0/
-[2026-09-01 22:55:14] Publish mode finished. Successfully published 2 posts.
-[2026-09-02 22:54:37] === MODE: PREPARE ===
-[2026-09-02 22:54:37] Scraping https://kodaira.clinic/...
-[2026-09-02 22:54:39] Found 50 articles.
-[2026-09-02 22:54:39] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-02 22:54:39] Drew Dela Gothic One line '健康診査のご案内' at x=183, y=783.26 with fill=(255, 120, 20)
-[2026-09-02 22:54:39] Created post image (news): post_news.jpg (final size: (1080, 1080))
-[2026-09-02 22:55:02] Gemini API generation with gemini-3.7-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
-[2026-09-02 22:55:09] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-02 22:55:09] Drew Dela Gothic One line '旅行2' at x=413, y=740.26 with fill=(60, 165, 70)
-[2026-09-02 22:55:09] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
-[2026-09-02 22:55:26] Prepared 2 pending posts in pending_posts.json
-[2026-09-02 22:55:28] === MODE: PUBLISH ===
-[2026-09-02 22:55:28] Publishing 'news': '健康診査のご案内'...
-[2026-09-02 22:55:28] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-02 22:55:28] Publishing image to Instagram via Meta Graph API...
-[2026-09-02 22:55:28] Target IG_USER_ID: 17841469684858061
-[2026-09-02 22:55:28] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
-[2026-09-02 22:55:34] Container API Response: {'id': '17947402194322829'}
-[2026-09-02 22:55:34] Media container created successfully. ID: 17947402194322829
-[2026-09-02 22:55:40] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947402194322829'})
-[2026-09-02 22:55:43] Publish API Response: {'id': '18107129549157803'}
-[2026-09-02 22:55:43] SUCCESS: Instagram post published! Post ID: 18107129549157803
-[2026-09-02 22:55:43] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DczW8mdGgR2/
-[2026-09-02 22:55:46] Publishing 'sugar': '糖尿病　旅行2'...
-[2026-09-02 22:55:46] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-02 22:55:46] Publishing image to Instagram via Meta Graph API...
-[2026-09-02 22:55:46] Target IG_USER_ID: 17841469684858061
-[2026-09-02 22:55:46] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
-[2026-09-02 22:55:52] Container API Response: {'id': '17947402233322829'}
-[2026-09-02 22:55:52] Media container created successfully. ID: 17947402233322829
-[2026-09-02 22:55:58] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947402233322829'})
-[2026-09-02 22:56:01] Publish API Response: {'id': '18119816953926559'}
-[2026-09-02 22:56:01] SUCCESS: Instagram post published! Post ID: 18119816953926559
-[2026-09-02 22:56:01] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DczW-v8FiQY/
-[2026-09-02 22:56:04] Publish mode finished. Successfully published 2 posts.
-[2026-09-03 22:53:45] === MODE: PREPARE ===
-[2026-09-03 22:53:45] Scraping https://kodaira.clinic/...
-[2026-09-03 22:53:46] Found 50 articles.
-[2026-09-03 22:53:47] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-03 22:53:47] Drew Dela Gothic One line '当院へはじめてご来院' at x=95, y=724.52 with fill=(255, 120, 20)
-[2026-09-03 22:53:47] Drew Dela Gothic One line 'の方へ' at x=406, y=842.0 with fill=(255, 120, 20)
-[2026-09-03 22:53:47] Created post image (news): post_news.jpg (final size: (1080, 1080))
-[2026-09-03 22:53:53] Gemini API generation with gemini-3.7-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
-[2026-09-03 22:54:00] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-03 22:54:00] Drew Dela Gothic One line '旅行1' at x=424, y=740.26 with fill=(60, 165, 70)
-[2026-09-03 22:54:00] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
-[2026-09-03 22:54:07] Gemini API generation with gemini-3.7-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
-[2026-09-03 22:54:15] Gemini API generation with gemini-flash-latest failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
-[2026-09-03 22:54:17] Using fallback caption after Gemini models unavailable.
-[2026-09-03 22:54:17] Prepared 2 pending posts in pending_posts.json
-[2026-09-03 22:54:19] === MODE: PUBLISH ===
-[2026-09-03 22:54:19] Publishing 'news': '当院へはじめてご来院の方へ'...
-[2026-09-03 22:54:19] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-03 22:54:19] Publishing image to Instagram via Meta Graph API...
-[2026-09-03 22:54:19] Target IG_USER_ID: 17841469684858061
-[2026-09-03 22:54:19] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
-[2026-09-03 22:54:23] Container API Response: {'id': '17947537215322829'}
-[2026-09-03 22:54:23] Media container created successfully. ID: 17947537215322829
-[2026-09-03 22:54:29] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947537215322829'})
-[2026-09-03 22:54:32] Publish API Response: {'id': '18444009085123460'}
-[2026-09-03 22:54:32] SUCCESS: Instagram post published! Post ID: 18444009085123460
-[2026-09-03 22:54:32] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dc17m5ZFHqL/
-[2026-09-03 22:54:35] Publishing 'sugar': '糖尿病　旅行1'...
-[2026-09-03 22:54:35] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-03 22:54:35] Publishing image to Instagram via Meta Graph API...
-[2026-09-03 22:54:35] Target IG_USER_ID: 17841469684858061
-[2026-09-03 22:54:35] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
-[2026-09-03 22:54:40] Container API Response: {'id': '17947537410322829'}
-[2026-09-03 22:54:40] Media container created successfully. ID: 17947537410322829
-[2026-09-03 22:54:45] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947537410322829'})
-[2026-09-03 22:54:49] Publish API Response: {'id': '18178644244411170'}
-[2026-09-03 22:54:49] SUCCESS: Instagram post published! Post ID: 18178644244411170
-[2026-09-03 22:54:49] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dc17o2OCZHh/
-[2026-09-03 22:54:52] Publish mode finished. Successfully published 2 posts.
-[2026-09-04 22:38:27] === MODE: PREPARE ===
-[2026-09-04 22:38:27] Scraping https://kodaira.clinic/...
-[2026-09-04 22:38:29] Found 51 articles.
-[2026-09-04 22:38:30] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-04 22:38:30] Drew Dela Gothic One line '９月５日（土）の診療' at x=94, y=724.52 with fill=(255, 120, 20)
-[2026-09-04 22:38:30] Drew Dela Gothic One line 'について' at x=362, y=842.0 with fill=(255, 120, 20)
-[2026-09-04 22:38:30] Created post image (news): post_news.jpg (final size: (1080, 1080))
-[2026-09-04 22:38:36] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-04 22:38:36] Drew Dela Gothic One line '食事と採血２' at x=273, y=740.26 with fill=(60, 165, 70)
-[2026-09-04 22:38:36] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
-[2026-09-04 22:38:47] Prepared 2 pending posts in pending_posts.json
-[2026-09-04 22:38:49] === MODE: PUBLISH ===
-[2026-09-04 22:38:49] Publishing 'news': '９月５日（土）の診療について'...
-[2026-09-04 22:38:49] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-04 22:38:49] Publishing image to Instagram via Meta Graph API...
-[2026-09-04 22:38:49] Target IG_USER_ID: 17841469684858061
-[2026-09-04 22:38:49] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
-[2026-09-04 22:38:56] Container API Response: {'id': '17947689408322829'}
-[2026-09-04 22:38:56] Media container created successfully. ID: 17947689408322829
-[2026-09-04 22:39:02] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947689408322829'})
-[2026-09-04 22:39:05] Publish API Response: {'id': '18131666848729805'}
-[2026-09-04 22:39:05] SUCCESS: Instagram post published! Post ID: 18131666848729805
-[2026-09-04 22:39:06] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dc4eoePII3m/
-[2026-09-04 22:39:09] Publishing 'sugar': '糖尿病　食事と採血２'...
-[2026-09-04 22:39:09] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-04 22:39:09] Publishing image to Instagram via Meta Graph API...
-[2026-09-04 22:39:09] Target IG_USER_ID: 17841469684858061
-[2026-09-04 22:39:09] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
-[2026-09-04 22:39:13] Container API Response: {'id': '17947689459322829'}
-[2026-09-04 22:39:13] Media container created successfully. ID: 17947689459322829
-[2026-09-04 22:39:19] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947689459322829'})
-[2026-09-04 22:39:22] Publish API Response: {'id': '18257265586307590'}
-[2026-09-04 22:39:22] SUCCESS: Instagram post published! Post ID: 18257265586307590
-[2026-09-04 22:39:22] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dc4eqo2IE40/
-[2026-09-04 22:39:25] Publish mode finished. Successfully published 2 posts.
-[2026-09-05 22:29:04] === MODE: PREPARE ===
-[2026-09-05 22:29:04] Scraping https://kodaira.clinic/...
-[2026-09-05 22:29:06] Found 51 articles.
-[2026-09-05 22:29:06] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-05 22:29:06] Drew Dela Gothic One line 'マスク着用のお願い' at x=139, y=783.26 with fill=(255, 120, 20)
-[2026-09-05 22:29:06] Created post image (news): post_news.jpg (final size: (1080, 1080))
-[2026-09-05 22:29:10] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-05 22:29:10] Drew Dela Gothic One line '食事と採血１' at x=273, y=740.26 with fill=(60, 165, 70)
-[2026-09-05 22:29:10] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
-[2026-09-05 22:29:13] Prepared 2 pending posts in pending_posts.json
-[2026-09-05 22:29:16] === MODE: PUBLISH ===
-[2026-09-05 22:29:16] Publishing 'news': 'マスク着用のお願い'...
-[2026-09-05 22:29:16] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-05 22:29:16] Publishing image to Instagram via Meta Graph API...
-[2026-09-05 22:29:16] Target IG_USER_ID: 17841469684858061
-[2026-09-05 22:29:16] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
-[2026-09-05 22:29:23] Container API Response: {'id': '17947837896322829'}
-[2026-09-05 22:29:23] Media container created successfully. ID: 17947837896322829
-[2026-09-05 22:29:29] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947837896322829'})
-[2026-09-05 22:29:32] Publish API Response: {'id': '18130626790675076'}
-[2026-09-05 22:29:32] SUCCESS: Instagram post published! Post ID: 18130626790675076
-[2026-09-05 22:29:32] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dc7CVXymy2h/
-[2026-09-05 22:29:35] Publishing 'sugar': '糖尿病　食事と採血１'...
-[2026-09-05 22:29:35] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-05 22:29:35] Publishing image to Instagram via Meta Graph API...
-[2026-09-05 22:29:35] Target IG_USER_ID: 17841469684858061
-[2026-09-05 22:29:35] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
-[2026-09-05 22:29:40] Container API Response: {'id': '17947837926322829'}
-[2026-09-05 22:29:40] Media container created successfully. ID: 17947837926322829
-[2026-09-05 22:29:46] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947837926322829'})
-[2026-09-05 22:29:48] Publish API Response: {'id': '18168709183455385'}
-[2026-09-05 22:29:48] SUCCESS: Instagram post published! Post ID: 18168709183455385
-[2026-09-05 22:29:49] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dc7CXgJm2Vv/
-[2026-09-05 22:29:52] Publish mode finished. Successfully published 2 posts.
-[2026-09-06 22:34:16] === MODE: PREPARE ===
-[2026-09-06 22:34:16] Scraping https://kodaira.clinic/...
-[2026-09-06 22:34:18] Found 51 articles.
-[2026-09-06 22:34:19] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-06 22:34:19] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 70)
-[2026-09-06 22:34:19] Drew Dela Gothic One line '高血圧、糖尿病、脂質異常症で' at x=90, y=749.6 with fill=(255, 120, 20)
-[2026-09-06 22:34:19] Drew Dela Gothic One line '通院中の患者さまへ' at x=224, y=842.0 with fill=(255, 120, 20)
-[2026-09-06 22:34:19] Created post image (news): post_news.jpg (final size: (1080, 1080))
-[2026-09-06 22:34:23] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-06 22:34:23] Drew Dela Gothic One line '熱中症　スポーツドリ' at x=95, y=681.52 with fill=(60, 165, 70)
-[2026-09-06 22:34:23] Drew Dela Gothic One line 'ンク' at x=451, y=799.0 with fill=(60, 165, 70)
-[2026-09-06 22:34:23] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
-[2026-09-06 22:34:26] Prepared 2 pending posts in pending_posts.json
-[2026-09-06 22:34:29] === MODE: PUBLISH ===
-[2026-09-06 22:34:29] Publishing 'news': '高血圧、糖尿病、脂質異常症で通院中の患者さまへ'...
-[2026-09-06 22:34:29] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-06 22:34:29] Publishing image to Instagram via Meta Graph API...
-[2026-09-06 22:34:29] Target IG_USER_ID: 17841469684858061
-[2026-09-06 22:34:29] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
-[2026-09-06 22:34:34] Container API Response: {'id': '17947979751322829'}
-[2026-09-06 22:34:34] Media container created successfully. ID: 17947979751322829
-[2026-09-06 22:34:39] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947979751322829'})
-[2026-09-06 22:34:42] Publish API Response: {'id': '17914280859448952'}
-[2026-09-06 22:34:42] SUCCESS: Instagram post published! Post ID: 17914280859448952
-[2026-09-06 22:34:42] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dc9nuVBmq-j/
-[2026-09-06 22:34:45] Publishing 'sugar': '糖尿病　熱中症　スポーツドリンク'...
-[2026-09-06 22:34:45] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-06 22:34:45] Publishing image to Instagram via Meta Graph API...
-[2026-09-06 22:34:45] Target IG_USER_ID: 17841469684858061
-[2026-09-06 22:34:45] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
-[2026-09-06 22:34:49] Container API Response: {'id': '17947979778322829'}
-[2026-09-06 22:34:49] Media container created successfully. ID: 17947979778322829
-[2026-09-06 22:34:55] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17947979778322829'})
-[2026-09-06 22:34:57] Publish API Response: {'id': '18207601819363441'}
-[2026-09-06 22:34:57] SUCCESS: Instagram post published! Post ID: 18207601819363441
-[2026-09-06 22:34:58] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/Dc9nwOumkG6/
-[2026-09-06 22:35:01] Publish mode finished. Successfully published 2 posts.
-[2026-09-07 23:10:07] === MODE: PREPARE ===
-[2026-09-07 23:10:07] Scraping https://kodaira.clinic/...
-[2026-09-07 23:10:09] Found 51 articles.
-[2026-09-07 23:10:09] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-07 23:10:09] Drew Dela Gothic One line '待合室での血圧測定の' at x=94, y=724.52 with fill=(255, 120, 20)
-[2026-09-07 23:10:09] Drew Dela Gothic One line 'お願い' at x=406, y=842.0 with fill=(255, 120, 20)
-[2026-09-07 23:10:09] Created post image (news): post_news.jpg (final size: (1080, 1080))
-[2026-09-07 23:11:08] Gemini API generation with gemini-3.7-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
-[2026-09-07 23:11:41] Gemini API generation with gemini-flash-latest failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
-[2026-09-07 23:11:43] Using fallback caption after Gemini models unavailable.
-[2026-09-07 23:11:44] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
-[2026-09-07 23:11:44] Drew Dela Gothic One line '熱中症の症状' at x=272, y=740.26 with fill=(60, 165, 70)
-[2026-09-07 23:11:44] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
-[2026-09-07 23:12:07] Prepared 2 pending posts in pending_posts.json
-[2026-09-07 23:12:09] === MODE: PUBLISH ===
-[2026-09-07 23:12:09] Publishing 'news': '待合室での血圧測定のお願い'...
-[2026-09-07 23:12:09] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-07 23:12:09] Publishing image to Instagram via Meta Graph API...
-[2026-09-07 23:12:09] Target IG_USER_ID: 17841469684858061
-[2026-09-07 23:12:09] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
-[2026-09-07 23:12:15] Container API Response: {'id': '17948130000322829'}
-[2026-09-07 23:12:15] Media container created successfully. ID: 17948130000322829
-[2026-09-07 23:12:20] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17948130000322829'})
-[2026-09-07 23:12:23] Publish API Response: {'id': '18094685711105089'}
-[2026-09-07 23:12:23] SUCCESS: Instagram post published! Post ID: 18094685711105089
-[2026-09-07 23:12:23] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DdAQ1DKGDfl/
-[2026-09-07 23:12:26] Publishing 'sugar': '糖尿病　熱中症の症状'...
-[2026-09-07 23:12:26] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
-[2026-09-07 23:12:26] Publishing image to Instagram via Meta Graph API...
-[2026-09-07 23:12:26] Target IG_USER_ID: 17841469684858061
-[2026-09-07 23:12:26] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
-[2026-09-07 23:12:31] Container API Response: {'id': '17948130042322829'}
-[2026-09-07 23:12:31] Media container created successfully. ID: 17948130042322829
-[2026-09-07 23:12:36] Polling status (1/10): FINISHED (Full: {'status_code': 'FINISHED', 'id': '17948130042322829'})
-[2026-09-07 23:12:39] Publish API Response: {'id': '17906864412537603'}
-[2026-09-07 23:12:39] SUCCESS: Instagram post published! Post ID: 17906864412537603
-[2026-09-07 23:12:39] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DdAQ3H3GAo-/
-[2026-09-07 23:12:42] Publish mode finished. Successfully published 2 posts.
+[2026-09-08 08:55:24] Scraping https://kodaira.clinic/...
+[2026-09-08 08:55:25] Found 51 articles.
+[2026-09-08 08:56:26] === MODE: PREPARE ===
+[2026-09-08 08:56:26] Scraping https://kodaira.clinic/...
+[2026-09-08 08:56:26] Found 51 articles.
+[2026-09-08 08:56:26] Current Max Site Dates: {'news': '2026-09-04', 'sugar': '2026-08-24'}
+[2026-09-08 08:56:26] Last Posted Dates: {}
+[2026-09-08 08:56:26] Initialized last_posted_dates[news] = 2026-09-04
+[2026-09-08 08:56:26] Initialized last_posted_dates[sugar] = 2026-08-24
+[2026-09-08 08:56:26] Selected target news: '９月５日（土）の診療について' (2026-09-04)
+[2026-09-08 08:56:27] Loaded font successfully: assets\fonts\DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-08 08:56:27] Drew Dela Gothic One line '９月５日（土）の診療' at x=94, y=724.52 with fill=(255, 120, 20)
+[2026-09-08 08:56:27] Drew Dela Gothic One line 'について' at x=362, y=842.0 with fill=(255, 120, 20)
+[2026-09-08 08:56:27] Created post image (news): post_news.jpg (final size: (1080, 1080))
+[2026-09-08 08:56:27] GEMINI_API_KEY is missing. Using fallback caption.
+[2026-09-08 08:56:27] Prepared 1 pending posts in pending_posts.json
+[2026-09-08 08:56:41] === MODE: PREPARE ===
+[2026-09-08 08:56:41] Scraping https://kodaira.clinic/...
+[2026-09-08 08:56:41] Found 51 articles.
+[2026-09-08 08:56:41] Current Max Site Dates: {'news': '2026-09-04', 'sugar': '2026-08-24'}
+[2026-09-08 08:56:41] Last Posted Dates: {'news': '2026-09-04', 'sugar': '2026-08-24'}
+[2026-09-08 08:56:41] Selected target news: '９月５日（土）の診療について' (2026-09-04)
+[2026-09-08 08:56:42] Loaded font successfully: assets\fonts\DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-08 08:56:42] Drew Dela Gothic One line '９月５日（土）の診療' at x=94, y=724.52 with fill=(255, 120, 20)
+[2026-09-08 08:56:42] Drew Dela Gothic One line 'について' at x=362, y=842.0 with fill=(255, 120, 20)
+[2026-09-08 08:56:42] Created post image (news): post_news.jpg (final size: (1080, 1080))
+[2026-09-08 08:56:42] GEMINI_API_KEY is missing. Using fallback caption.
+[2026-09-08 08:56:42] Prepared 1 pending posts in pending_posts.json
+[2026-09-08 08:56:53] Scraping https://kodaira.clinic/...
+[2026-09-08 08:56:53] Found 51 articles.
+[2026-09-08 08:56:58] === MODE: PREPARE ===
+[2026-09-08 08:56:58] Scraping https://kodaira.clinic/...
+[2026-09-08 08:56:59] Found 51 articles.
+[2026-09-08 08:56:59] Current Max Site Dates: {'news': '2026-09-04', 'sugar': '2026-08-24'}
+[2026-09-08 08:56:59] Last Posted Dates: {'news': '2026-09-04', 'sugar': '2026-08-24'}
+[2026-09-08 08:56:59] No new unposted articles found matching latest date criteria (or post deletion detected). Skipping.

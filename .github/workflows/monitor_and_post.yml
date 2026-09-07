@@ -58,5 +58,5 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add seen_hashes.json posted_urls.json execution_log.txt
+          git add seen_hashes.json last_posted_dates.json posted_urls.json execution_log.txt
           git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update state and execution logs [skip ci]" && git pull --rebase origin main && git push)

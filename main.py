@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 import json
 import os
@@ -15,6 +16,7 @@ SITE_URL = "https://kodaira.clinic/"
 DISCLAIMER_TEXT = "※本投稿は情報提供を目的としており、個別の診断・治療は医師にご相談ください。"
 HASHTAGS_TEXT = "#小平市 #内科 #糖尿病"
 SEEN_HASHES_FILE = Path("seen_hashes.json")
+LAST_POSTED_DATES_FILE = Path("last_posted_dates.json")
 POST_URLS_FILE = Path("posted_urls.json")
 PENDING_POSTS_FILE = Path("pending_posts.json")
 EXEC_LOG_FILE = Path("execution_log.txt")
@@ -43,6 +45,31 @@ def ensure_disclaimer(caption: str) -> str:
 
 def calculate_hash(key_string: str) -> str:
     return hashlib.sha256(key_string.encode("utf-8")).hexdigest()
+
+def parse_article_date(date_str: str):
+    """記事の日付文字列 (例: '2026.09.04', '2026/09/04') を datetime.date に変換する"""
+    if not date_str:
+        return None
+    m = re.search(r"(\d{4})[\.\/\-年](\d{1,2})[\.\/\-月](\d{1,2})", date_str)
+    if m:
+        try:
+            return datetime.date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+        except ValueError:
+            return None
+    return None
+
+def load_last_posted_dates() -> dict:
+    if LAST_POSTED_DATES_FILE.exists():
+        try:
+            with open(LAST_POSTED_DATES_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return {}
+    return {}
+
+def save_last_posted_dates(dates_dict: dict):
+    with open(LAST_POSTED_DATES_FILE, "w", encoding="utf-8") as f:
+        json.dump(dates_dict, f, ensure_ascii=False, indent=2)
 
 def load_seen_hashes() -> set:
     if SEEN_HASHES_FILE.exists():
@@ -267,11 +294,13 @@ def scrape_kodaira_clinic():
 
             key = f"{date_text}_{category}_{title_text}"
             article_hash = calculate_hash(key)
+            parsed_date = parse_article_date(date_text)
 
             articles.append({
                 "hash": article_hash,
                 "category": category,
                 "date": date_text,
+                "parsed_date": parsed_date.isoformat() if parsed_date else None,
                 "title": title_text,
                 "body": body_text
             })
@@ -282,6 +311,12 @@ def scrape_kodaira_clinic():
         if item["hash"] not in seen:
             seen.add(item["hash"])
             unique_articles.append(item)
+
+    # 日付の降順（最新順）にソート
+    unique_articles.sort(
+        key=lambda x: x["parsed_date"] or "0000-00-00",
+        reverse=True
+    )
 
     log_debug(f"Found {len(unique_articles)} articles.")
     return unique_articles
@@ -420,26 +455,89 @@ def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
 def mode_prepare():
     log_debug("=== MODE: PREPARE ===")
     seen_hashes = load_seen_hashes()
+    last_posted_dates = load_last_posted_dates()
     articles = scrape_kodaira_clinic()
+
+    if not articles:
+        log_debug("No articles scraped from website.")
+        with open(PENDING_POSTS_FILE, "w", encoding="utf-8") as f:
+            json.dump([], f)
+        return
+
+    # カテゴリごとに最大日付（現在HP上の最新日付）を算出
+    max_dates_on_site = {}
+    for cat in ["news", "sugar"]:
+        cat_dates = [a["parsed_date"] for a in articles if a["category"] == cat and a["parsed_date"]]
+        if cat_dates:
+            max_dates_on_site[cat] = max(cat_dates)
+        else:
+            max_dates_on_site[cat] = None
+
+    log_debug(f"Current Max Site Dates: {max_dates_on_site}")
+    log_debug(f"Last Posted Dates: {last_posted_dates}")
+
+    # 初回起動・過去記事の自動アーカイブ化処理（HP上の過去記事を全て seen_hashes に登録）
+    updated_seen = False
+    for cat in ["news", "sugar"]:
+        max_d = max_dates_on_site.get(cat)
+        last_p_d = last_posted_dates.get(cat)
+        
+        if not last_p_d and max_d:
+            last_posted_dates[cat] = max_d
+            log_debug(f"Initialized last_posted_dates[{cat}] = {max_d}")
+
+        for a in articles:
+            if a["category"] == cat and a["parsed_date"]:
+                cutoff_date = last_posted_dates.get(cat) or max_d
+                if cutoff_date and a["parsed_date"] < cutoff_date:
+                    if a["hash"] not in seen_hashes:
+                        seen_hashes.add(a["hash"])
+                        updated_seen = True
+
+    if updated_seen:
+        save_seen_hashes(seen_hashes)
+        save_last_posted_dates(last_posted_dates)
 
     target_news = None
     target_sugar = None
 
     for article in articles:
-        if article["hash"] in seen_hashes:
+        cat = article["category"]
+        p_date = article["parsed_date"]
+        a_hash = article["hash"]
+
+        if cat == "news" and target_news:
             continue
-        if article["category"] == "news" and not target_news:
+        if cat == "sugar" and target_sugar:
+            continue
+
+        if a_hash in seen_hashes:
+            continue
+
+        if not p_date:
+            continue
+
+        last_p = last_posted_dates.get(cat)
+        if last_p and p_date < last_p:
+            log_debug(f"Skipping article '{article['title']}' ({p_date}) because it is older than last posted date ({last_p}).")
+            continue
+
+        max_d = max_dates_on_site.get(cat)
+        if max_d and p_date < max_d:
+            log_debug(f"Skipping article '{article['title']}' ({p_date}) because it is not the latest date on site ({max_d}).")
+            continue
+
+        if cat == "news":
             target_news = article
-        elif article["category"] == "sugar" and not target_sugar:
+            log_debug(f"Selected target news: '{article['title']}' ({p_date})")
+        elif cat == "sugar":
             target_sugar = article
-        
-        if target_news and target_sugar:
-            break
+            log_debug(f"Selected target sugar: '{article['title']}' ({p_date})")
 
     targets = [a for a in [target_news, target_sugar] if a is not None]
 
     if not targets:
-        log_debug("No new unposted articles found.")
+        log_debug("No new unposted articles found matching latest date criteria (or post deletion detected). Skipping.")
         with open(PENDING_POSTS_FILE, "w", encoding="utf-8") as f:
             json.dump([], f)
         return
@@ -477,6 +575,7 @@ def mode_publish():
         return
 
     seen_hashes = load_seen_hashes()
+    last_posted_dates = load_last_posted_dates()
     posted_count = 0
 
     for item in pending:
@@ -489,12 +588,19 @@ def mode_publish():
 
         if result.get("success"):
             seen_hashes.add(article["hash"])
+            cat = article["category"]
+            p_date = article.get("parsed_date")
+            if p_date:
+                curr_last = last_posted_dates.get(cat)
+                if not curr_last or p_date > curr_last:
+                    last_posted_dates[cat] = p_date
             posted_count += 1
             time.sleep(3)
         else:
             log_debug(f"Publish failed for '{article['title']}': {result}")
 
     save_seen_hashes(seen_hashes)
+    save_last_posted_dates(last_posted_dates)
     log_debug(f"Publish mode finished. Successfully published {posted_count} posts.")
 
 def main():
