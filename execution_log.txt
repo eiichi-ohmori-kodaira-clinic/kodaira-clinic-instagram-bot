@@ -909,3 +909,19 @@
 [2026-09-16 09:15:45] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
 [2026-09-16 09:15:45] GEMINI_API_KEY is missing. Using fallback caption.
 [2026-09-16 09:15:45] Prepared 2 pending posts in pending_posts.json
+[2026-09-16 00:19:41] === MODE: PREPARE ===
+[2026-09-16 00:19:41] Scraping https://kodaira.clinic/...
+[2026-09-16 00:19:43] Found 49 articles.
+[2026-09-16 00:19:43] Current Max Site Dates: {'news': '2026-09-15', 'sugar': '2026-09-14'}
+[2026-09-16 00:19:43] Last Posted Dates: {'news': '2026-09-04', 'sugar': '2026-09-07'}
+[2026-09-16 00:19:43] Selected target news: 'インフルエンザの予防接種について' (2026-09-15)
+[2026-09-16 00:19:43] Selected target sugar: '糖尿病　きのこ　海藻' (2026-09-14)
+[2026-09-16 00:19:43] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-16 00:19:43] Drew Dela Gothic One line 'インフルエンザの予防' at x=95, y=724.52 with fill=(255, 120, 20)
+[2026-09-16 00:19:43] Drew Dela Gothic One line '接種について' at x=273, y=842.0 with fill=(255, 120, 20)
+[2026-09-16 00:19:43] Created post image (news): post_news.jpg (final size: (1080, 1080))
+[2026-09-16 00:20:08] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-16 00:20:08] Drew Dela Gothic One line 'きのこ　海藻' at x=272, y=740.26 with fill=(60, 165, 70)
+[2026-09-16 00:20:08] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
+[2026-09-16 00:20:12] Gemini API generation with gemini-3.7-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-09-16 00:20:20] Prepared 2 pending posts in pending_posts.json
