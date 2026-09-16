@@ -873,3 +873,39 @@
 [2026-09-11 22:54:09] SUCCESS: Instagram post published! Post ID: 17885575428654229
 [2026-09-11 22:54:09] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DdKh64uHFk3/
 [2026-09-11 22:54:12] Publish mode finished. Successfully published 1 posts.
+[2026-09-16 09:06:25] Scraping https://kodaira.clinic/...
+[2026-09-16 09:06:26] Found 49 articles.
+[2026-09-16 09:06:35] === MODE: PREPARE ===
+[2026-09-16 09:06:35] Scraping https://kodaira.clinic/...
+[2026-09-16 09:06:36] Found 49 articles.
+[2026-09-16 09:06:36] Current Max Site Dates: {'news': '2026-09-15', 'sugar': '2026-09-14'}
+[2026-09-16 09:06:36] Last Posted Dates: {'news': '2026-09-04', 'sugar': '2026-09-07'}
+[2026-09-16 09:06:36] Selected target news: 'インフルエンザの予防接種について' (2026-09-15)
+[2026-09-16 09:06:36] Selected target sugar: '糖尿病　きのこ　海藻' (2026-09-14)
+[2026-09-16 09:06:36] Loaded font successfully: assets\fonts\DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-16 09:06:36] Drew Dela Gothic One line 'インフルエンザの予防' at x=95, y=724.52 with fill=(255, 120, 20)
+[2026-09-16 09:06:36] Drew Dela Gothic One line '接種について' at x=273, y=842.0 with fill=(255, 120, 20)
+[2026-09-16 09:06:36] Created post image (news): post_news.jpg (final size: (1080, 1080))
+[2026-09-16 09:06:36] GEMINI_API_KEY is missing. Using fallback caption.
+[2026-09-16 09:06:37] Loaded font successfully: assets\fonts\DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-16 09:06:37] Drew Dela Gothic One line 'きのこ　海藻' at x=272, y=740.26 with fill=(60, 165, 70)
+[2026-09-16 09:06:37] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
+[2026-09-16 09:06:37] GEMINI_API_KEY is missing. Using fallback caption.
+[2026-09-16 09:06:37] Prepared 2 pending posts in pending_posts.json
+[2026-09-16 09:15:44] === MODE: PREPARE ===
+[2026-09-16 09:15:44] Scraping https://kodaira.clinic/...
+[2026-09-16 09:15:44] Found 49 articles.
+[2026-09-16 09:15:44] Current Max Site Dates: {'news': '2026-09-15', 'sugar': '2026-09-14'}
+[2026-09-16 09:15:44] Last Posted Dates: {'news': '2026-09-04', 'sugar': '2026-09-07'}
+[2026-09-16 09:15:44] Selected target news: 'インフルエンザの予防接種について' (2026-09-15)
+[2026-09-16 09:15:44] Selected target sugar: '糖尿病　きのこ　海藻' (2026-09-14)
+[2026-09-16 09:15:45] Loaded font successfully: assets\fonts\DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-16 09:15:45] Drew Dela Gothic One line 'インフルエンザの予防' at x=95, y=724.52 with fill=(255, 120, 20)
+[2026-09-16 09:15:45] Drew Dela Gothic One line '接種について' at x=273, y=842.0 with fill=(255, 120, 20)
+[2026-09-16 09:15:45] Created post image (news): post_news.jpg (final size: (1080, 1080))
+[2026-09-16 09:15:45] GEMINI_API_KEY is missing. Using fallback caption.
+[2026-09-16 09:15:45] Loaded font successfully: assets\fonts\DelaGothicOne-Regular.ttf (size: 89)
+[2026-09-16 09:15:45] Drew Dela Gothic One line 'きのこ　海藻' at x=272, y=740.26 with fill=(60, 165, 70)
+[2026-09-16 09:15:45] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
+[2026-09-16 09:15:45] GEMINI_API_KEY is missing. Using fallback caption.
+[2026-09-16 09:15:45] Prepared 2 pending posts in pending_posts.json

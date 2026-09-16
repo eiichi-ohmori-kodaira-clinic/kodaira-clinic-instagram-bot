@@ -384,6 +384,9 @@ def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
     log_debug(f"Target IG_USER_ID: {ig_user_id}")
     log_debug(f"Image URL: {image_raw_url}")
 
+    # GitHub Raw URL の反映待ち（3秒）
+    time.sleep(3)
+
     # 1. コンテナ作成
     container_url = f"https://graph.facebook.com/v20.0/{ig_user_id}/media"
     params = {
