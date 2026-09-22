@@ -1169,3 +1169,5 @@
 [2026-09-22 18:38:40] Scraping https://kodaira.clinic/...
 [2026-09-22 18:38:42] Failed to fetch https://kodaira.clinic/: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
 [2026-09-22 18:38:42] No articles scraped from website.
+[2026-09-22 18:38:44] === MODE: PUBLISH ===
+[2026-09-22 18:38:44] Pending posts list is empty.
