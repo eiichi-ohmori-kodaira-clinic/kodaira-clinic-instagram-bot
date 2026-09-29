@@ -1381,3 +1381,9 @@
 [2026-09-29 14:55:30] Current Max Site Dates: {'news': '2026-09-28', 'sugar': '2026-09-28'}
 [2026-09-29 14:55:30] Last Posted Dates: {'news': '2026-09-28', 'sugar': '2026-09-28'}
 [2026-09-29 14:55:30] No new unposted articles found matching latest date criteria (or post deletion detected). Skipping.
+[2026-09-29 09:36:53] === MODE: PREPARE ===
+[2026-09-29 09:36:53] Scraping https://kodaira.clinic/...
+[2026-09-29 09:36:54] Found 46 articles.
+[2026-09-29 09:36:54] Current Max Site Dates: {'news': '2026-09-28', 'sugar': '2026-09-28'}
+[2026-09-29 09:36:54] Last Posted Dates: {'news': '2026-09-28', 'sugar': '2026-09-28'}
+[2026-09-29 09:36:54] No new unposted articles found matching latest date criteria (or post deletion detected). Skipping.
