@@ -348,7 +348,13 @@ def generate_caption_with_gemini(article: dict) -> str:
 5. 本文作成のみを行い、文末のハッシュタグ（#小平市 #内科 #糖尿病）と免責事項は別途自動追加されます。
 """
 
-    models_to_try = ["gemini-3.7-flash", "gemini-flash-latest"]
+    models_to_try = [
+        "gemini-3.7-flash",
+        "gemini-flash-latest",
+        "gemini-2.5-flash",
+        "gemini-2.0-flash",
+        "gemini-1.5-flash"
+    ]
     for model_name in models_to_try:
         try:
             client = genai.Client(api_key=gemini_api_key)
