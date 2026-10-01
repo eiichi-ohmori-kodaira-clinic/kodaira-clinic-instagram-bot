@@ -1421,3 +1421,23 @@
 [2026-09-30 19:54:32] No new unposted articles found matching latest date criteria (or post deletion detected). Skipping.
 [2026-09-30 19:54:35] === MODE: PUBLISH ===
 [2026-09-30 19:54:35] Pending posts list is empty.
+[2026-10-01 00:26:04] === MODE: PREPARE ===
+[2026-10-01 00:26:04] Scraping https://kodaira.clinic/...
+[2026-10-01 00:26:07] Found 46 articles.
+[2026-10-01 00:26:07] Current Max Site Dates: {'news': '2026-10-01', 'sugar': '2026-09-28'}
+[2026-10-01 00:26:07] Last Posted Dates: {'news': '2026-09-28', 'sugar': '2026-09-28'}
+[2026-10-01 00:26:07] Selected target news: 'インフルエンザワクチン・新型コロナワクチンの接種開始について' (2026-10-01)
+[2026-10-01 00:26:07] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 89)
+[2026-10-01 00:26:07] Loaded font successfully: assets/fonts/DelaGothicOne-Regular.ttf (size: 70)
+[2026-10-01 00:26:07] Drew Dela Gothic One line 'インフルエンザワクチン・新' at x=107, y=703.4 with fill=(255, 120, 20)
+[2026-10-01 00:26:07] Drew Dela Gothic One line '型コロナワクチンの接種開始' at x=85, y=795.8 with fill=(255, 120, 20)
+[2026-10-01 00:26:07] Drew Dela Gothic One line 'について' at x=400, y=888.2 with fill=(255, 120, 20)
+[2026-10-01 00:26:07] Created post image (news): post_news.jpg (final size: (1080, 1080))
+[2026-10-01 00:26:14] Gemini API generation with gemini-3.8-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-10-01 00:26:16] Gemini API generation with gemini-3.7-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-10-01 00:26:19] Gemini API generation with gemini-flash-latest failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+[2026-10-01 00:26:21] Gemini API generation with gemini-2.5-flash failed: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://ai.google.dev/gemini-api/docs/get-started).', 'status': 'NOT_FOUND'}}
+[2026-10-01 00:26:23] Gemini API generation with gemini-2.0-flash failed: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'This model models/gemini-2.0-flash is no longer available. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://ai.google.dev/gemini-api/docs/get-started).', 'status': 'NOT_FOUND'}}
+[2026-10-01 00:26:25] Gemini API generation with gemini-1.5-flash failed: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}
+[2026-10-01 00:26:27] Using fallback caption after Gemini models unavailable.
+[2026-10-01 00:26:27] Prepared 1 pending posts in pending_posts.json
