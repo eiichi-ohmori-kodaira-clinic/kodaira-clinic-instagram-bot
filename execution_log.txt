@@ -1579,3 +1579,27 @@
 [2026-10-05 10:11:58] Gemini API generation with gemini-1.5-flash failed: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}
 [2026-10-05 10:12:00] Using fallback caption after Gemini models unavailable.
 [2026-10-05 10:12:00] Prepared 2 pending posts in pending_posts.json
+[2026-10-05 10:12:02] === MODE: PUBLISH ===
+[2026-10-05 10:12:02] Publishing 'news': '開院4周年のご挨拶'...
+[2026-10-05 10:12:02] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-10-05 10:12:02] Publishing image to Instagram via Meta Graph API...
+[2026-10-05 10:12:02] Target IG_USER_ID: 17841469684858061
+[2026-10-05 10:12:02] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_news.jpg
+[2026-10-05 10:12:09] Container API Response: {'id': '17952273432322829'}
+[2026-10-05 10:12:09] Media container created successfully. ID: 17952273432322829
+[2026-10-05 10:12:15] Polling status (1/10): FINISHED (Full: {'id': '17952273432322829', 'status_code': 'FINISHED'})
+[2026-10-05 10:12:17] Publish API Response: {'id': '18036192209844372'}
+[2026-10-05 10:12:17] SUCCESS: Instagram post published! Post ID: 18036192209844372
+[2026-10-05 10:12:18] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DeG90KrjANw/
+[2026-10-05 10:12:21] Publishing 'sugar': '糖尿病　血圧３'...
+[2026-10-05 10:12:21] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-10-05 10:12:21] Publishing image to Instagram via Meta Graph API...
+[2026-10-05 10:12:21] Target IG_USER_ID: 17841469684858061
+[2026-10-05 10:12:21] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
+[2026-10-05 10:12:27] Container API Response: {'id': '17952273471322829'}
+[2026-10-05 10:12:27] Media container created successfully. ID: 17952273471322829
+[2026-10-05 10:12:32] Polling status (1/10): FINISHED (Full: {'id': '17952273471322829', 'status_code': 'FINISHED'})
+[2026-10-05 10:12:35] Publish API Response: {'id': '17975133338935211'}
+[2026-10-05 10:12:35] SUCCESS: Instagram post published! Post ID: 17975133338935211
+[2026-10-05 10:12:35] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DeG92aRjGYI/
+[2026-10-05 10:12:38] Publish mode finished. Successfully published 2 posts.
