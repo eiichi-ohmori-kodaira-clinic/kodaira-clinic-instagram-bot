@@ -1757,3 +1757,16 @@
 [2026-10-12 00:20:26] Drew Dela Gothic One line 'について' at x=362, y=740.26 with fill=(60, 165, 70)
 [2026-10-12 00:20:26] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
 [2026-10-12 00:20:34] Prepared 1 pending posts in pending_posts.json
+[2026-10-12 00:20:36] === MODE: PUBLISH ===
+[2026-10-12 00:20:36] Publishing 'sugar': '糖尿病について'...
+[2026-10-12 00:20:36] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-10-12 00:20:36] Publishing image to Instagram via Meta Graph API...
+[2026-10-12 00:20:36] Target IG_USER_ID: 17841469684858061
+[2026-10-12 00:20:36] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
+[2026-10-12 00:20:44] Container API Response: {'id': '17953252122322829'}
+[2026-10-12 00:20:44] Media container created successfully. ID: 17953252122322829
+[2026-10-12 00:20:49] Polling status (1/10): FINISHED (Full: {'id': '17953252122322829', 'status_code': 'FINISHED'})
+[2026-10-12 00:20:51] Publish API Response: {'id': '18104819495358108'}
+[2026-10-12 00:20:51] SUCCESS: Instagram post published! Post ID: 18104819495358108
+[2026-10-12 00:20:51] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DeX7skjl45C/
+[2026-10-12 00:20:54] Publish mode finished. Successfully published 1 posts.
