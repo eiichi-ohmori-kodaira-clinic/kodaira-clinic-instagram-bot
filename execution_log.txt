@@ -1985,3 +1985,9 @@
 [2026-10-18 17:55:00] No new unposted articles found matching latest date criteria (or post deletion detected). Skipping.
 [2026-10-18 17:55:03] === MODE: PUBLISH ===
 [2026-10-18 17:55:03] Pending posts list is empty.
+[2026-10-18 22:53:50] === MODE: PREPARE ===
+[2026-10-18 22:53:50] Scraping https://kodaira.clinic/...
+[2026-10-18 22:53:52] Found 49 articles.
+[2026-10-18 22:53:52] Current Max Site Dates: {'news': '2026-10-14', 'sugar': '2026-10-12'}
+[2026-10-18 22:53:52] Last Posted Dates: {'news': '2026-10-14', 'sugar': '2026-10-12'}
+[2026-10-18 22:53:52] No new unposted articles found matching latest date criteria (or post deletion detected). Skipping.
