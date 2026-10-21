@@ -2078,3 +2078,5 @@
 [2026-10-21 14:24:48] Current Max Site Dates: {'news': '2026-10-14', 'sugar': '2026-10-19'}
 [2026-10-21 14:24:48] Last Posted Dates: {'news': '2026-10-14', 'sugar': '2026-10-19'}
 [2026-10-21 14:24:48] No new unposted articles found matching latest date criteria (or post deletion detected). Skipping.
+[2026-10-21 14:24:51] === MODE: PUBLISH ===
+[2026-10-21 14:24:51] Pending posts list is empty.
