@@ -2235,3 +2235,16 @@
 [2026-10-26 08:41:10] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
 [2026-10-26 08:41:15] Gemini API generation with gemini-3.8-flash failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
 [2026-10-26 08:44:49] Prepared 1 pending posts in pending_posts.json
+[2026-10-26 08:44:51] === MODE: PUBLISH ===
+[2026-10-26 08:44:51] Publishing 'sugar': '糖尿病　運動２'...
+[2026-10-26 08:44:51] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-10-26 08:44:51] Publishing image to Instagram via Meta Graph API...
+[2026-10-26 08:44:51] Target IG_USER_ID: 17841469684858061
+[2026-10-26 08:44:51] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
+[2026-10-26 08:44:59] Container API Response: {'id': '17955674985322829'}
+[2026-10-26 08:44:59] Media container created successfully. ID: 17955674985322829
+[2026-10-26 08:45:05] Polling status (1/10): FINISHED (Full: {'id': '17955674985322829', 'status_code': 'FINISHED'})
+[2026-10-26 08:45:10] Publish API Response: {'id': '18128547847864381'}
+[2026-10-26 08:45:10] SUCCESS: Instagram post published! Post ID: 18128547847864381
+[2026-10-26 08:45:10] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/De84h-dgQxC/
+[2026-10-26 08:45:13] Publish mode finished. Successfully published 1 posts.
