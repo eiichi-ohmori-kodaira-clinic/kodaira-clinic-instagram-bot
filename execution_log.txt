@@ -2410,3 +2410,13 @@
 [2026-11-02 00:26:13] Drew Dela Gothic One line '運動３' at x=406, y=740.26 with fill=(60, 165, 70)
 [2026-11-02 00:26:13] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
 [2026-11-02 00:27:31] Prepared 1 pending posts in pending_posts.json
+[2026-11-02 00:27:33] === MODE: PUBLISH ===
+[2026-11-02 00:27:33] Publishing 'sugar': '糖尿病　運動３'...
+[2026-11-02 00:27:33] Checking credentials: IG_USER_ID exists=True, META_ACCESS_TOKEN exists=True
+[2026-11-02 00:27:33] Publishing image to Instagram via Meta Graph API...
+[2026-11-02 00:27:33] Target IG_USER_ID: 17841469684858061
+[2026-11-02 00:27:33] Image URL: https://raw.githubusercontent.com/eiichi-ohmori-kodaira-clinic/kodaira-clinic-instagram-bot/main/post_sugar.jpg
+[2026-11-02 00:27:36] Container API Response: {'error': {'message': 'The token has expired on Saturday, 31-Oct-26 00:39:39 PDT. The current time is Sunday, 01-Nov-26 16:27:36 PST.', 'type': 'OAuthException', 'code': 190, 'fbtrace_id': 'AXDfIs_DoVh4OGLjKz1fywm'}}
+[2026-11-02 00:27:36] ERROR: Failed to create media container. Meta API Response: {'error': {'message': 'The token has expired on Saturday, 31-Oct-26 00:39:39 PDT. The current time is Sunday, 01-Nov-26 16:27:36 PST.', 'type': 'OAuthException', 'code': 190, 'fbtrace_id': 'AXDfIs_DoVh4OGLjKz1fywm'}}
+[2026-11-02 00:27:36] Publish failed for '糖尿病　運動３': {'success': False, 'response': {'error': {'message': 'The token has expired on Saturday, 31-Oct-26 00:39:39 PDT. The current time is Sunday, 01-Nov-26 16:27:36 PST.', 'type': 'OAuthException', 'code': 190, 'fbtrace_id': 'AXDfIs_DoVh4OGLjKz1fywm'}}}
+[2026-11-02 00:27:36] Publish mode finished. Successfully published 0 posts.
