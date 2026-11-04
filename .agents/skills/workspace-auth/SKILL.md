@@ -1,6 +1,6 @@
 ---
 name: workspace-auth
-description: @kodaira.clinic ドメイン限定認証およびGoogle Identity Services実装ルール。
+description: "@kodaira.clinic ドメイン限定認証およびGoogle Identity Services実装ルール。"
 ---
 # Google Workspace 認証仕様
 
@@ -13,3 +13,4 @@ description: @kodaira.clinic ドメイン限定認証およびGoogle Identity Se
 if (payload.hd !== 'kodaira.clinic') {
   throw new UnauthorizedException('kodaira.clinic ドメインのアカウントのみアクセス可能です。');
 }
+```
