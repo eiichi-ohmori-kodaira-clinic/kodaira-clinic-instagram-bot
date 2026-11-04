@@ -2548,3 +2548,16 @@
 [2026-11-04 01:08:55] ERROR: Failed to create media container. Meta API Response: {'error': {'message': 'The token has expired on Saturday, 31-Oct-26 00:39:39 PDT. The current time is Tuesday, 03-Nov-26 17:08:55 PST.', 'type': 'OAuthException', 'code': 190, 'fbtrace_id': 'Ad0VdPB903SJkNEhDTIvNrk'}}
 [2026-11-04 01:08:55] Publish failed for '糖尿病　運動３': {'success': False, 'response': {'error': {'message': 'The token has expired on Saturday, 31-Oct-26 00:39:39 PDT. The current time is Tuesday, 03-Nov-26 17:08:55 PST.', 'type': 'OAuthException', 'code': 190, 'fbtrace_id': 'Ad0VdPB903SJkNEhDTIvNrk'}}}
 [2026-11-04 01:08:55] Publish mode finished. Successfully published 0 posts.
+[2026-11-04 23:16:42] Scraping https://kodaira.clinic/...
+[2026-11-04 23:16:43] Found 50 articles.
+[2026-11-04 23:20:22] === MODE: PREPARE ===
+[2026-11-04 23:20:22] Scraping https://kodaira.clinic/...
+[2026-11-04 23:20:23] Found 50 articles.
+[2026-11-04 23:20:23] Current Max Site Dates: {'news': '2026-10-01', 'sugar': '2026-11-02'}
+[2026-11-04 23:20:23] Last Posted Dates: {'news': '2026-10-14', 'sugar': '2026-10-26'}
+[2026-11-04 23:20:23] Selected target sugar: '糖尿病　運動３' (2026-11-02)
+[2026-11-04 23:20:23] Loaded font successfully: assets\fonts\DelaGothicOne-Regular.ttf (size: 89)
+[2026-11-04 23:20:23] Drew Dela Gothic One line '運動３' at x=406, y=740.26 with fill=(60, 165, 70)
+[2026-11-04 23:20:23] Created post image (sugar): post_sugar.jpg (final size: (1080, 1080))
+[2026-11-04 23:20:23] GEMINI_API_KEY is missing. Using fallback caption.
+[2026-11-04 23:20:23] Prepared 1 pending posts in pending_posts.json
