@@ -2586,3 +2586,9 @@
 [2026-11-04 14:40:55] SUCCESS: Instagram post published! Post ID: 18392176195225207
 [2026-11-04 14:40:55] SUCCESS: Instagram Post Direct URL (Permalink): https://www.instagram.com/p/DfUsZ0pjXNM/
 [2026-11-04 14:40:58] Publish mode finished. Successfully published 1 posts.
+[2026-11-04 23:48:23] === MODE: PREPARE ===
+[2026-11-04 23:48:23] Scraping https://kodaira.clinic/...
+[2026-11-04 23:48:24] Found 50 articles.
+[2026-11-04 23:48:24] Current Max Site Dates: {'news': '2026-10-01', 'sugar': '2026-11-02'}
+[2026-11-04 23:48:24] Last Posted Dates: {'news': '2026-10-14', 'sugar': '2026-11-02'}
+[2026-11-04 23:48:24] No new unposted articles found matching latest date criteria (or post deletion detected). Skipping.

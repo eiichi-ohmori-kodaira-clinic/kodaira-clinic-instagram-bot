@@ -36,6 +36,8 @@ jobs:
       - name: Step 1 - Prepare Images and Captions
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
         run: |
           python main.py prepare
 
@@ -43,7 +45,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          for f in post_news.jpg post_sugar.jpg pending_posts.json execution_log.txt; do
+          for f in post_news.jpg post_sugar.jpg pending_posts.json token_store.json execution_log.txt; do
             if [ -f "$f" ]; then
               git add "$f"
             fi
@@ -67,7 +69,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          for f in seen_hashes.json last_posted_dates.json posted_urls.json execution_log.txt; do
+          for f in seen_hashes.json last_posted_dates.json posted_urls.json token_store.json execution_log.txt; do
             if [ -f "$f" ]; then
               git add "$f"
             fi

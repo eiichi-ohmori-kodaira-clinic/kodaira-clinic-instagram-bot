@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import hmac
 import json
 import os
 import re
@@ -19,6 +20,7 @@ SEEN_HASHES_FILE = Path("seen_hashes.json")
 LAST_POSTED_DATES_FILE = Path("last_posted_dates.json")
 POST_URLS_FILE = Path("posted_urls.json")
 PENDING_POSTS_FILE = Path("pending_posts.json")
+TOKEN_STORE_FILE = Path("token_store.json")
 EXEC_LOG_FILE = Path("execution_log.txt")
 ASSETS_DIR = Path("assets")
 
@@ -83,6 +85,161 @@ def load_seen_hashes() -> set:
 def save_seen_hashes(hashes: set):
     with open(SEEN_HASHES_FILE, "w", encoding="utf-8") as f:
         json.dump(list(sorted(hashes)), f, ensure_ascii=False, indent=2)
+
+def _derive_crypto_keys() -> tuple:
+    """環境変数から暗号化キーとMACキーを安全に導出する"""
+    seed = f"{os.environ.get('GEMINI_API_KEY', '')}:{os.environ.get('IG_USER_ID', '')}:kodaira_clinic_v1"
+    return seed.encode("utf-8")
+
+def encrypt_and_save_token(token: str, token_type: str = "page_never_expiring"):
+    """アクセストークンをPBKDF2+SHA256ストリーム暗号とHMACで暗号化して安全に保存する"""
+    if not token:
+        return
+    seed_bytes = _derive_crypto_keys()
+    salt = os.urandom(16)
+    dk = hashlib.pbkdf2_hmac("sha256", seed_bytes, salt, 100000, dklen=64)
+    enc_key, mac_key = dk[:32], dk[32:]
+
+    token_bytes = token.encode("utf-8")
+    cipher_bytes = bytearray(len(token_bytes))
+    block_count = (len(token_bytes) + 31) // 32
+    keystream = bytearray()
+    for blk in range(block_count):
+        keystream.extend(hashlib.sha256(enc_key + blk.to_bytes(4, "big")).digest())
+
+    for i in range(len(token_bytes)):
+        cipher_bytes[i] = token_bytes[i] ^ keystream[i]
+
+    mac = hmac.new(mac_key, salt + bytes(cipher_bytes), hashlib.sha256).digest()
+    payload = {
+        "salt": salt.hex(),
+        "ciphertext": bytes(cipher_bytes).hex(),
+        "mac": mac.hex(),
+        "token_type": token_type,
+        "updated_at": time.strftime("%Y-%m-%d %H:%M:%S")
+    }
+    with open(TOKEN_STORE_FILE, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+
+def load_and_decrypt_token() -> tuple:
+    """暗号化保存されたアクセストークンを検証・復号して (token, token_type) を返す"""
+    if not TOKEN_STORE_FILE.exists():
+        return None, None
+    try:
+        with open(TOKEN_STORE_FILE, "r", encoding="utf-8") as f:
+            payload = json.load(f)
+        salt = bytes.fromhex(payload["salt"])
+        cipher_bytes = bytes.fromhex(payload["ciphertext"])
+        expected_mac = bytes.fromhex(payload["mac"])
+        token_type = payload.get("token_type", "unknown")
+
+        seed_bytes = _derive_crypto_keys()
+        dk = hashlib.pbkdf2_hmac("sha256", seed_bytes, salt, 100000, dklen=64)
+        enc_key, mac_key = dk[:32], dk[32:]
+
+        calc_mac = hmac.new(mac_key, salt + cipher_bytes, hashlib.sha256).digest()
+        if not hmac.compare_digest(calc_mac, expected_mac):
+            log_debug("WARNING: Token store MAC verification failed.")
+            return None, None
+
+        plain_bytes = bytearray(len(cipher_bytes))
+        block_count = (len(cipher_bytes) + 31) // 32
+        keystream = bytearray()
+        for blk in range(block_count):
+            keystream.extend(hashlib.sha256(enc_key + blk.to_bytes(4, "big")).digest())
+
+        for i in range(len(cipher_bytes)):
+            plain_bytes[i] = cipher_bytes[i] ^ keystream[i]
+
+        return plain_bytes.decode("utf-8"), token_type
+    except Exception as e:
+        log_debug(f"Failed to decrypt stored token: {e}")
+        return None, None
+
+def verify_ig_token(ig_user_id: str, token: str) -> bool:
+    """指定されたトークンで対象Instagramビジネスアカウントにアクセス可能か検証する"""
+    if not ig_user_id or not token:
+        return False
+    try:
+        url = f"https://graph.facebook.com/v20.0/{ig_user_id}"
+        res = requests.get(url, params={"fields": "id", "access_token": token}, timeout=15)
+        data = res.json()
+        return str(data.get("id")) == str(ig_user_id)
+    except Exception:
+        return False
+
+def extract_never_expiring_page_token(ig_user_id: str, base_token: str) -> str:
+    """長期トークンから /me/accounts を経由して無期限のPage Access Tokenを自動抽出する"""
+    if not ig_user_id or not base_token:
+        return None
+    try:
+        url = "https://graph.facebook.com/v20.0/me/accounts"
+        params = {
+            "fields": "id,name,access_token,instagram_business_account",
+            "access_token": base_token
+        }
+        res = requests.get(url, params=params, timeout=20)
+        data = res.json()
+        pages = data.get("data", [])
+        if not pages:
+            return None
+
+        # 1. instagram_business_account.id が一致するページを優先探索
+        for page in pages:
+            ig_acct = page.get("instagram_business_account", {})
+            page_token = page.get("access_token")
+            if page_token and str(ig_acct.get("id")) == str(ig_user_id):
+                if verify_ig_token(ig_user_id, page_token):
+                    log_debug(f"Extracted never-expiring Page Access Token via matched IG account (Page ID: {page.get('id')}).")
+                    return page_token
+
+        # 2. 一致情報がない場合、各ページのトークンでIGアカウントへアクセスできるか検証
+        for page in pages:
+            page_token = page.get("access_token")
+            if page_token and verify_ig_token(ig_user_id, page_token):
+                log_debug(f"Extracted never-expiring Page Access Token via verified page (Page ID: {page.get('id')}).")
+                return page_token
+    except Exception as e:
+        log_debug(f"Exception while extracting page token: {e}")
+    return None
+
+def resolve_best_meta_token(ig_user_id: str, env_token: str) -> str:
+    """
+    無期限ページトークンを優先的に抽出・保存・返却する。
+    1. 保存済みの無期限ページトークンがあり、かつ有効であればそれを使用
+    2. 環境変数トークンから無期限ページトークンを抽出できれば暗号化保存して使用
+    3. 環境変数トークン自体が有効であればそれを使用
+    """
+    stored_token, stored_type = load_and_decrypt_token()
+
+    # 環境変数トークンから無期限ページトークンの抽出を試行
+    if env_token and ig_user_id:
+        page_token = extract_never_expiring_page_token(ig_user_id, env_token)
+        if page_token:
+            if page_token != stored_token or stored_type != "page_never_expiring":
+                encrypt_and_save_token(page_token, token_type="page_never_expiring")
+                log_debug("Saved newly extracted never-expiring Page Access Token to token_store.json.")
+            else:
+                log_debug("Verified never-expiring Page Access Token is already up-to-date in token_store.json.")
+            return page_token
+
+    # 保存済みの無期限トークンが有効か確認（元の60日トークンが期限切れになった後もここで永久動作）
+    if stored_token and ig_user_id:
+        if verify_ig_token(ig_user_id, stored_token):
+            log_debug(f"Using valid stored token ({stored_type}) from token_store.json.")
+            return stored_token
+        else:
+            log_debug("Stored token in token_store.json is no longer valid.")
+
+    # フォールバック：環境変数トークン自体を検証して保存・使用
+    if env_token and ig_user_id:
+        if verify_ig_token(ig_user_id, env_token):
+            if env_token != stored_token:
+                encrypt_and_save_token(env_token, token_type="env_base_token")
+                log_debug("Saved valid base token to token_store.json.")
+            return env_token
+
+    return env_token
 
 def save_posted_url(data: dict):
     urls = []
@@ -374,9 +531,10 @@ def generate_caption_with_gemini(article: dict) -> str:
 
 def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
     ig_user_id = os.environ.get("IG_USER_ID")
-    meta_access_token = os.environ.get("META_ACCESS_TOKEN")
+    env_meta_token = os.environ.get("META_ACCESS_TOKEN")
+    meta_access_token = resolve_best_meta_token(ig_user_id, env_meta_token)
 
-    log_debug(f"Checking credentials: IG_USER_ID exists={bool(ig_user_id)}, META_ACCESS_TOKEN exists={bool(meta_access_token)}")
+    log_debug(f"Checking credentials: IG_USER_ID exists={bool(ig_user_id)}, RESOLVED_TOKEN exists={bool(meta_access_token)}")
 
     if not ig_user_id or not meta_access_token:
         log_debug("ERROR: IG_USER_ID or META_ACCESS_TOKEN is missing. Aborting publish.")
@@ -463,6 +621,10 @@ def post_to_instagram(image_path: str, caption: str, title: str = "") -> dict:
 
 def mode_prepare():
     log_debug("=== MODE: PREPARE ===")
+    ig_user_id = os.environ.get("IG_USER_ID")
+    env_meta_token = os.environ.get("META_ACCESS_TOKEN")
+    if ig_user_id and env_meta_token:
+        resolve_best_meta_token(ig_user_id, env_meta_token)
     seen_hashes = load_seen_hashes()
     last_posted_dates = load_last_posted_dates()
     articles = scrape_kodaira_clinic()
