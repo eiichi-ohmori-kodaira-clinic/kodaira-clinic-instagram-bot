@@ -3151,3 +3151,11 @@
 [2026-11-27 11:54:50] No new unposted articles found matching latest date criteria (or post deletion detected). Skipping.
 [2026-11-27 11:54:52] === MODE: PUBLISH ===
 [2026-11-27 11:54:52] Pending posts list is empty.
+[2026-11-27 23:18:10] === MODE: PREPARE ===
+[2026-11-27 23:18:12] Extracted never-expiring Page Access Token via matched IG account (Page ID: 1275271822340651).
+[2026-11-27 23:18:12] Saved newly extracted never-expiring Page Access Token to token_store.json.
+[2026-11-27 23:18:12] Scraping https://kodaira.clinic/...
+[2026-11-27 23:18:14] Found 51 articles.
+[2026-11-27 23:18:14] Current Max Site Dates: {'news': '2026-11-24', 'sugar': '2026-11-02'}
+[2026-11-27 23:18:14] Last Posted Dates: {'news': '2026-11-24', 'sugar': '2026-11-02'}
+[2026-11-27 23:18:14] No new unposted articles found matching latest date criteria (or post deletion detected). Skipping.
